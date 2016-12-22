@@ -1,0 +1,36 @@
+@keyframes fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* on state transition */
+
+.ng-enter {
+  opacity: 0;
+  transition: 400ms;
+}
+
+.ng-enter-active {
+  opacity: 1;
+  transition: 400ms;
+}
+
+h6 {
+  display: inline-block;
+  border: 1px solid black;
+  padding: 10px;
+}
+
+.formspace {
+  margin: 30px;
+  width: 50%;
+}
+
+.space {
+  margin: auto;
+  width: 90%;
+}
+
+.list{
+  display: block;
+}

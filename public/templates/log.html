@@ -1,0 +1,91 @@
+<form class="formspace">
+    <div class="form-group">
+      <label >Food Database</label>
+      <input ng-model="foodname" name="food" type="text" class="form-control" placeholder="Enter a food">
+    </div>
+  <button style="color: black;" ng-click="submitFood()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
+</form>
+
+<form class="formspace">
+    <div class="form-group">
+      <label >My Saved Foods</label>
+      <input ng-model="foodname" name="food" type="text" class="form-control" placeholder="Enter a food">
+    </div>
+  <button style="color: black;" ng-click="submitMyFood()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
+</form>
+
+
+
+<table class="table space">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Food</th>
+      <th>Quantity</th>
+      <th>Calories</th>
+      <th>Total Fat</th>
+      <th>Saturated Fat</th>
+      <th>Cholesterol</th>
+      <th>Sodium</th>
+      <th>Carbohydrates</th>
+      <th>Fiber</th>
+      <th>Sugars</th>
+      <th>Protein</th>
+      <th></th>
+      <th></th>
+
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="foods in food">
+      <th scope="row">{{$index + 1}}</th>
+
+      <td>{{foods.foodname}}</td>
+      <td>{{foods.quantity}}</td>
+      <td>{{foods.calories}}</td>
+      <td>{{foods.totalFat}}</td>
+      <td>{{foods.saturatedFat}}</td>
+      <td>{{foods.cholesterol}}</td>
+      <td>{{foods.sodium}}</td>
+      <td>{{foods.carbohydrates}}</td>
+      <td>{{foods.fiber}}</td>
+      <td>{{foods.sugars}}</td>
+      <td>{{foods.protein}}</td>
+      <td><button type="button" name="button" class="btn btn-primary">Edit</button></td>
+      <td><button type="button" name="button" class="btn btn-danger">Delete</button></td>
+
+
+    </tr>
+    <tr>
+      <th>
+        <form class=""  method="post">
+
+
+      <td>  <input ng-model="foodname" name="food" type="text" class="form-control" placeholder="Enter a food">
+      </td>
+      <td>  <input ng-model="quantity" name="food" type="text" class="form-control" placeholder="Qty">
+      </td>
+      <td>  <input ng-model="calories" name="food" type="text" class="form-control" placeholder="Cal">
+      </td>
+      <td>  <input ng-model="total_fat" name="food" type="text" class="form-control" placeholder="Fat">
+      </td>
+      <td>  <input ng-model="saturated_fat" name="food" type="text" class="form-control" placeholder="Sat.Fat">
+      </td>
+      <td>  <input ng-model="cholesterol" name="food" type="text" class="form-control" placeholder="Chol">
+      </td>
+      <td>  <input ng-model="sodium" name="food" type="text" class="form-control" placeholder="Sod">
+      </td>
+      <td>  <input ng-model="carbohydrates" name="food" type="text" class="form-control" placeholder="carb">
+      </td>
+      <td>  <input ng-model="fiber" name="food" type="text" class="form-control" placeholder="fib">
+      </td>
+      <td>  <input ng-model="sugars" name="food" type="text" class="form-control" placeholder="sug">
+      </td>
+      <td>  <input ng-model="protein" name="food" type="text" class="form-control" placeholder="Pro">
+      </td>
+      <td><button type="button" name="button" class="btn btn-success">Submit</button></td>
+          </form>
+      </th>
+    </tr>
+  </tbody>
+</table>
