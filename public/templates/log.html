@@ -9,9 +9,9 @@
 <form class="formspace">
     <div class="form-group">
       <label >My Saved Foods</label>
-      <input ng-model="foodname" name="food" type="text" class="form-control" placeholder="Enter a food">
+      <input ng-model="foodname2" name="food" type="text" class="form-control" placeholder="Enter a food">
     </div>
-  <button style="color: black;" ng-click="submitMyFood()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
+  <button style="color: black;" ng-click="submitSavedFood()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
 </form>
 
 
@@ -23,14 +23,14 @@
       <th>Food</th>
       <th>Quantity</th>
       <th>Calories</th>
-      <th>Total Fat</th>
-      <th>Saturated Fat</th>
-      <th>Cholesterol</th>
-      <th>Sodium</th>
-      <th>Carbohydrates</th>
-      <th>Fiber</th>
-      <th>Sugars</th>
-      <th>Protein</th>
+      <th>Total Fat(g)</th>
+      <th>Saturated Fat(g)</th>
+      <th>Cholesterol(mg)</th>
+      <th>Sodium(mg)</th>
+      <th>Carbohydrates(g)</th>
+      <th>Fiber(g)</th>
+      <th>Sugars(g)</th>
+      <th>Protein(g)</th>
       <th></th>
       <th></th>
 
@@ -52,7 +52,7 @@
       <td>{{foods.sugars}}</td>
       <td>{{foods.protein}}</td>
       <td><button type="button" name="button" class="btn btn-primary">Edit</button></td>
-      <td><button type="button" name="button" class="btn btn-danger">Delete</button></td>
+      <td><button ng-click="deleteFoods(foods.foodname)" type="button" name="button" class="btn btn-danger">Delete</button></td>
 
 
     </tr>
@@ -61,29 +61,29 @@
         <form class=""  method="post">
 
 
-      <td>  <input ng-model="foodname" name="food" type="text" class="form-control" placeholder="Enter a food">
+      <td>  <input ng-model ="myfood" name="food" type="text" class="form-control" placeholder="Enter a food">
       </td>
       <td>  <input ng-model="quantity" name="food" type="text" class="form-control" placeholder="Qty">
       </td>
-      <td>  <input ng-model="calories" name="food" type="text" class="form-control" placeholder="Cal">
+      <td>  <input ng-model="calories" name="food" type="text" class="form-control" placeholder="Calories">
       </td>
       <td>  <input ng-model="total_fat" name="food" type="text" class="form-control" placeholder="Fat">
       </td>
-      <td>  <input ng-model="saturated_fat" name="food" type="text" class="form-control" placeholder="Sat.Fat">
+      <td>  <input ng-model="saturated_fat" name="food" type="text" class="form-control" placeholder="Saturated Fat">
       </td>
-      <td>  <input ng-model="cholesterol" name="food" type="text" class="form-control" placeholder="Chol">
+      <td>  <input ng-model="cholesterol" name="food" type="text" class="form-control" placeholder="cholesterol">
       </td>
-      <td>  <input ng-model="sodium" name="food" type="text" class="form-control" placeholder="Sod">
+      <td>  <input ng-model="sodium" name="food" type="text" class="form-control" placeholder="Sodium">
       </td>
-      <td>  <input ng-model="carbohydrates" name="food" type="text" class="form-control" placeholder="carb">
+      <td>  <input ng-model="carbohydrates" name="food" type="text" class="form-control" placeholder="carbohydrates">
       </td>
-      <td>  <input ng-model="fiber" name="food" type="text" class="form-control" placeholder="fib">
+      <td>  <input ng-model="fiber" name="food" type="text" class="form-control" placeholder="fiber">
       </td>
-      <td>  <input ng-model="sugars" name="food" type="text" class="form-control" placeholder="sug">
+      <td>  <input ng-model="sugars" name="food" type="text" class="form-control" placeholder="sugars">
       </td>
-      <td>  <input ng-model="protein" name="food" type="text" class="form-control" placeholder="Pro">
+      <td>  <input ng-model="protein" name="food" type="text" class="form-control" placeholder="Protein">
       </td>
-      <td><button type="button" name="button" class="btn btn-success">Submit</button></td>
+      <td><button ng-click="createSavedFood()" type="button" name="button" class="btn btn-success">Submit</button></td>
           </form>
       </th>
     </tr>

@@ -40,10 +40,30 @@ app.factory('foodlog', function factory($http, $rootScope, $cookies) {
     });
   };
 
+  service.del = function(id){
+    return $http ({
+      method: 'POST',
+      url: '/delete',
+      data: {id: id},
+    });
+  };
+
+  service.delfoods = function(id, food){
+    return $http ({
+      method: "POST",
+      url: '/delfoods',
+      data: {
+              id: id,
+              food: food
+            }
+    });
+  };
+
   service.foodListInLog = function(id){
     return $http ({
       method: 'GET',
-      url: '/log/' + id
+      url: '/log/' + id,
+      params: {username: "Dom"}
     });
   };
 
@@ -58,6 +78,13 @@ app.factory('foodlog', function factory($http, $rootScope, $cookies) {
     return $http ({
       method: 'POST',
       url: '/foodToDatabase',
+      data: data
+    });
+  };
+  service.submitsavedfoods = function(data){
+    return $http ({
+      method: 'POST',
+      url: '/submitsavedfoods',
       data: data
     });
   };
@@ -78,12 +105,22 @@ app.controller('alllogsController', function($scope, $state, foodlog) {
 };
   alllogs();
 
+$scope.deleteLogPage = function(id) {
+  foodlog.del(id)
+  .success(function(data){
+    console.log(data);
+    $state.reload();
+  })
+  .error(function(data){
+    console.log("failed");
+});
+};
 
 $scope.createLog = function(){
 foodlog.createlog()
 .success(function(data){
-  console.log(data);
-  $state.go('log');
+  console.log("888", data);
+  $state.go('log', {logId: data._id });
 
 })
 .error(function(data){
@@ -112,9 +149,18 @@ foodlog.foodListInLog($scope.logId)
 
 generateAllFoods();
 
-
+$scope.deleteFoods = function(food){
+  foodlog.delfoods($scope.logId, food)
+  .success(function(data){
+    console.log(data);
+  })
+  .error(function(data){
+    console.log("failed");
+  });
+};
 
 var foodname = null;
+var foodname2 = null;
 
 $scope.submitFood =function(){
 
@@ -147,6 +193,53 @@ foodlog.searchBigData(foodname)
   console.log("failed");
 });
 });
+}
+};
+
+$scope.createSavedFood = function(){
+
+// var createdfood = {
+// foodname: $scope.myfood,
+// quantity: $scope.quantity,
+// calories: $scope.calories,
+// total_fat: $scope.total_fat,
+// saturated_fat: $scope.saturated_fat,
+// cholesterol: $scope.cholesterol,
+// sodium: $scope.sodium,
+// carbohydrates: $scope.carbohydrates,
+// fiber: $scope.fiber,
+// sugars: $scope.sugars,
+// protein: $scope.protein
+// };
+//
+// };
+
+};
+
+
+
+$scope.submitSavedFoods = function(){
+
+  foodname2 = $scope.foodname2;
+  console.log("BAH", foodname);
+
+  var data = {
+    username: "Dom",
+    food: $scope.foodname2,
+    logId: $scope.logId
+  };
+
+  if(foodname2 === undefined) {
+    $scope.enteredNada2 = true;
+  }
+  else{
+    foodlog.submitsavedfoods(data)
+    .success(function(data){
+      console.log(data);
+    })
+    .error(function(data){
+      console.log("failed");
+    });
 }
 };
 

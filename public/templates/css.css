@@ -33,4 +33,8 @@ h6 {
 
 .list{
   display: block;
+
+}
+.list:hover{
+  text-decoration: none;
 }

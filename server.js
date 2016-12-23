@@ -59,6 +59,22 @@ app.get('/alllogs', function(request, response){
   });
 });
 
+app.post('/delete', function(request, response){
+  var id = request.body.id;
+  console.log("HERES THE ID", id);
+  return Log.remove({_id: id})
+  .then(function(){
+    Log.find({_id: id});
+  })
+  .then(function(data){
+    console.log("YOOOOO", data);
+    response.send("success");
+  })
+  .catch(function(err){
+    console.log(err.errors);
+  });
+});
+
 app.get('/createlog', function(request, response){
 
   var username = request.query.username;
@@ -77,6 +93,23 @@ app.get('/createlog', function(request, response){
 });
 });
 
+app.post('/delfoods', function(request, response){
+  var id = request.body.id;
+  var food = request.body.food;
+  console.log("YEAH FOOD", food);
+  console.log("YEAH ID", id);
+  //update the Log by "pulling" food from the log array
+  Log.update({_id: id},
+    {$pull: {log: food}})
+  .then(function(data){
+    console.log("GONE!", data);
+    response.send(data);
+  })
+  .catch(function(err){
+    console.log(err.errors);
+  });
+});
+
 app.post('/foodToDatabase', function(request, response) {
   var data = request.body;
   console.log("Here!", data.logId);
@@ -86,7 +119,13 @@ app.post('/foodToDatabase', function(request, response) {
   return user;
   })
   .then(function(user){
-    var newFood = new Food({
+    //update the same information if its already there (so you don't create duplicates)
+    //or create a new food item to be saved in the database
+    return Food.update({
+      foodname: data.food.item_name,
+      username: user.username
+    }, {
+      $set: {
       foodname: data.food.item_name,
       quantity: data.food.nf_serving_size_qty,
       calories: data.food.nf_calories,
@@ -99,19 +138,21 @@ app.post('/foodToDatabase', function(request, response) {
       sugars: data.food.nf_sugars,
       protein: data.food.nf_protein,
       username: user.username,
+    }
+    }, {
+      upsert: true
     });
 
-    return newFood.save();
-
   })
-  .then(function(food){
-    return [Log.find({ _id: data.logId }), food];
+  .then(function(){
+    return [Log.find({ _id: data.logId }), Food.find({foodname: data.food.item_name, username: data.username})];
   })
   .spread(function(log, food){
     console.log("LOG", log);
     console.log("FOOD", food);
     console.log(log[0].log);
-    log[0].log.push(food.foodname);
+    log[0].log.push(food[0].foodname);
+    console.log(log[0].log);
     return log[0].save()
   })
   .then(function(data){
@@ -119,9 +160,54 @@ app.post('/foodToDatabase', function(request, response) {
   })
   .catch(function(err){
     console.log("NOOOO!!!", err.errors);
+    response.send(err.message);
+    console.log(err.stack);
   });
   });
 
+// app.post('/submitsavedfoods', function(request, response){
+//   var data = request.body;
+//   User.findOne({username: data.username})
+//   .then(function(user){
+//     return Food.update({
+//       foodname: data.foodname2.item_name,
+//       username: user.username
+//     }, {
+//       $set: {
+//       foodname: data.foodname2.myfood,
+//       quantity: data.foodname2.quantity,
+//       calories: data.foodname2.calories,
+//       totalFat: data.foodname2.total_fat,
+//       saturatedFat: data.foodname2.saturated_fat,
+//       cholesterol: data.foodname2.cholesterol,
+//       sodium: data.foodname2.sodium,
+//       carbohydrates: data.foodname2.carbohydrates,
+//       fiber: data.foodname2.fiber,
+//       sugars: data.foodname2.sugars,
+//       protein: data.foodname2.protein,
+//       username: user.username,
+//     }
+//     }, {
+//       upsert: true
+//     })
+//     .then(function(){
+//       return [Log.find({ _id: data.logId }), Food.find({foodname: data.foodname2.myfood, username: data.username})];
+//       })
+//       .spread(function(log, food){
+//         log[0].log.push(food[0].foodname2);
+//         return log[0].save();
+//       })
+//       .then(function(data){
+//         response.send(data);
+//       })
+//       .catch(function(err){
+//         console.log("NOOOO!!!", err.errors);
+//         response.send(err.message);
+//         console.log(err.stack);
+//       });
+//   });
+//
+// });
 app.get('/log/:id', function(request, response){
   var theId = request.params.id;
   console.log(theId);
