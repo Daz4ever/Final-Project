@@ -149,6 +149,7 @@ foodlog.foodListInLog($scope.logId)
 .success(function(data){
   console.log("WHAT?", data);
   $scope.food = data;
+
 })
 .error(function(data){
   console.log("failed");
@@ -197,6 +198,7 @@ foodlog.searchBigData(foodname)
     generateAllFoods();
 
 
+
   })
 .error(function(data){
   console.log("failed");
@@ -225,6 +227,7 @@ else{
   sugars: $scope.sugars,
   protein: $scope.protein
   };
+
 
   var data = {
     food: createdfood,
@@ -265,6 +268,7 @@ $scope.submitSavedFoods = function(){
     foodlog.submitsavedfoods(data)
     .success(function(data){
       console.log(data);
+      generateAllFoods();
     })
     .error(function(data){
       console.log("failed");
