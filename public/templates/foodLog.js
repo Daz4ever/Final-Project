@@ -48,13 +48,14 @@ app.factory('foodlog', function factory($http, $rootScope, $cookies) {
     });
   };
 
-  service.delfoods = function(id, food){
+  service.delfoods = function(id, food, food_id){
     return $http ({
       method: "POST",
       url: '/delfoods',
       data: {
               id: id,
-              food: food
+              food: food,
+              food_id: food_id
             }
     });
   };
@@ -85,6 +86,13 @@ app.factory('foodlog', function factory($http, $rootScope, $cookies) {
     return $http ({
       method: 'POST',
       url: '/submitsavedfoods',
+      data: data
+    });
+  };
+  service.createsavedfood = function(data){
+    return $http ({
+      method: 'POST',
+      url: '/createsavedfood',
       data: data
     });
   };
@@ -139,7 +147,7 @@ console.log($scope.logId);
 var generateAllFoods = function(){
 foodlog.foodListInLog($scope.logId)
 .success(function(data){
-  console.log(data);
+  console.log("WHAT?", data);
   $scope.food = data;
 })
 .error(function(data){
@@ -149,10 +157,11 @@ foodlog.foodListInLog($scope.logId)
 
 generateAllFoods();
 
-$scope.deleteFoods = function(food){
-  foodlog.delfoods($scope.logId, food)
+$scope.deleteFoods = function(food, food_id){
+  foodlog.delfoods($scope.logId, food, food_id)
   .success(function(data){
     console.log(data);
+    generateAllFoods();
   })
   .error(function(data){
     console.log("failed");
@@ -197,22 +206,41 @@ foodlog.searchBigData(foodname)
 };
 
 $scope.createSavedFood = function(){
+var createfood = null;
 
-// var createdfood = {
-// foodname: $scope.myfood,
-// quantity: $scope.quantity,
-// calories: $scope.calories,
-// total_fat: $scope.total_fat,
-// saturated_fat: $scope.saturated_fat,
-// cholesterol: $scope.cholesterol,
-// sodium: $scope.sodium,
-// carbohydrates: $scope.carbohydrates,
-// fiber: $scope.fiber,
-// sugars: $scope.sugars,
-// protein: $scope.protein
-// };
-//
-// };
+if(createfood === undefined){
+  $scope.nothingHere = true;
+}
+else{
+  createdfood = {
+  foodname: $scope.myfood,
+  quantity: $scope.quantity,
+  calories: $scope.calories,
+  total_fat: $scope.total_fat,
+  saturated_fat: $scope.saturated_fat,
+  cholesterol: $scope.cholesterol,
+  sodium: $scope.sodium,
+  carbohydrates: $scope.carbohydrates,
+  fiber: $scope.fiber,
+  sugars: $scope.sugars,
+  protein: $scope.protein
+  };
+
+  var data = {
+    food: createdfood,
+    username: "Dom",
+    id: $scope.logId
+  };
+
+  foodlog.createsavedfood(data)
+  .success(function(data){
+    console.log("SOOO EASY, NOT!", data);
+    generateAllFoods();
+  })
+  .error(function(data){
+    console.log("failed");
+  });
+}
 
 };
 
@@ -221,7 +249,7 @@ $scope.createSavedFood = function(){
 $scope.submitSavedFoods = function(){
 
   foodname2 = $scope.foodname2;
-  console.log("BAH", foodname);
+  console.log("BAH", foodname2);
 
   var data = {
     username: "Dom",
@@ -231,6 +259,7 @@ $scope.submitSavedFoods = function(){
 
   if(foodname2 === undefined) {
     $scope.enteredNada2 = true;
+    console.log("here")
   }
   else{
     foodlog.submitsavedfoods(data)

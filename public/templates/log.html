@@ -11,7 +11,7 @@
       <label >My Saved Foods</label>
       <input ng-model="foodname2" name="food" type="text" class="form-control" placeholder="Enter a food">
     </div>
-  <button style="color: black;" ng-click="submitSavedFood()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
+  <button style="color: black;" ng-click="submitSavedFoods()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
 </form>
 
 
@@ -52,7 +52,7 @@
       <td>{{foods.sugars}}</td>
       <td>{{foods.protein}}</td>
       <td><button type="button" name="button" class="btn btn-primary">Edit</button></td>
-      <td><button ng-click="deleteFoods(foods.foodname)" type="button" name="button" class="btn btn-danger">Delete</button></td>
+      <td><button ng-click="deleteFoods(foods.foodname, foods._id)" type="button" name="button" class="btn btn-danger">Delete</button></td>
 
 
     </tr>
@@ -61,7 +61,7 @@
         <form class=""  method="post">
 
 
-      <td>  <input ng-model ="myfood" name="food" type="text" class="form-control" placeholder="Enter a food">
+      <td>  <input ng-model ="myfood" name="food" type="text" class="form-control" placeholder="Enter Food">
       </td>
       <td>  <input ng-model="quantity" name="food" type="text" class="form-control" placeholder="Qty">
       </td>
