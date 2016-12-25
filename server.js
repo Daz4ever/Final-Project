@@ -48,7 +48,7 @@ const Food = mongoose.model('Food', {
 
 
  const MySaved = mongoose.model('MySaved', {
-   saved: [{_id: mongoose.Schema.Types.ObjectId, foodname: String}],
+   saved: [String],
    username: String
  });
 
