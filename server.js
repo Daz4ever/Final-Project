@@ -244,12 +244,22 @@ app.post('/submitsavedfoods', function(request, response){
 
 app.post('/createsavedfood', function(request, response){
   var data = request.body;
-  User.findOne({username: data.username})
-  .then(function(user){
+  bluebird.all([User.findOne({username: data.username}), Log.findOne({_id: data.id}), MySaved.findOne({username: data.username})])
+  .spread(function(user, log, saved){
+
+    //add foodname to log(array) and saved(array) if it doesn't already exist. This must be done before creating the food otherwise you'll always have a food to add to the log even if its a duplicate.
+
+    if (log.log.indexOf(data.food.foodname) === -1) {
+    log.log.push(data.food.foodname);
+    saved.saved.push(data.food.foodname);
+    return [log.save(), saved.save()];
+    }
+
+
     //most likely the food is being created for the first time but used upsert
     //incase user tries to make another food with the same name. The food will be updated
     //if it exist already or created if it doesnt exist yet
-    return Food.update({
+      return Food.update({
       foodname: data.food.foodname}, {
 
       $set: {
@@ -273,19 +283,7 @@ app.post('/createsavedfood', function(request, response){
   })
   .then(function(){
     //why does adding a semicolon after the return statement pass a value of nothing??
-    return [MySaved.find({username: data.username}), Log.find({_id: data.id}), Food.findOne({foodname:data.food.foodname})]
-  })
-  .spread(function(savedfoods, log, food){
-    console.log("BOOM2", savedfoods);
-    savedfoods[0].saved.push(food);
-    console.log("BOOM2", savedfoods[0].saved);
-    console.log("BOOM", log[0]);
-    log[0].log.push(food);
-    console.log("BOOM3", log[0].log);
-    return [savedfoods[0].save(), log[0].save()];
-  })
-  .spread(function(savedfoods, log){
-    return Food.find({foodname: data.food.foodname});
+    return Food.findOne({foodname:data.food.foodname})
   })
   .then(function(food){
     response.send(food);
@@ -300,28 +298,18 @@ app.post('/createsavedfood', function(request, response){
 app.get('/log/:id', function(request, response){
   var theId = request.params.id;
   console.log(theId);
-  Log.find({
+  Log.findOne({
     _id: theId
   })
   .then(function(data){
-    console.log("OMG WHY???", data);
+    console.log("OMG WHY???", data.log);
 
+      //filter through all foods in log
 
-      // });
-      console.log("888", data[0].log);
-      //pushing all objects in a temp array to just grab the foodname to use in the food.find()
-      var temp = [];
-
-      data[0].log.forEach(function(name){
-        temp.push([name]);
-      });
-      console.log("777", temp);
-      //filter through all foods
-        //finds all foodnames in array temp
     return Food.find({
       foodname: {
       $in:
-      temp
+      data.log
     }
     });
     })
