@@ -201,11 +201,11 @@ app.post('/submitsavedfoods', function(request, response){
   console.log("999", data.food)
   User.findOne({username: data.username})
   .then(function(user){
-      return [Log.find({ _id: data.logId }), MySaved.find({username: data.username})]
+      return [Log.findOne({ _id: data.logId }), MySaved.findOne({username: data.username})]
       })
       .spread(function(log, mysaved){
         //need to grab the food from saved in Mysaved collection... then push it to log, then send the food
-        console.log("YEEEHAWWWW!", mysaved[0].saved)
+        console.log("YEEEHAWWWW!", mysaved.saved)
 
         //the saved array has objects but I just want to find the foodname that matches so I made a temp array
         //and push just the foodnames in them if they match
@@ -213,28 +213,38 @@ app.post('/submitsavedfoods', function(request, response){
 
           var temp =[];
 
-        mysaved[0].saved.forEach(function(object){
-          console.log("YESSS",object.foodname);
-          if (object.foodname === data.food) {
-            temp.push(object.foodname);
+        mysaved.saved.forEach(function(object){
+          console.log("YESSS", object);
+          if (object === data.food) {
+            temp.push(object);
           }
           console.log("RRRR", temp);
         });
 
 
         console.log("PLEASE WORK!", temp[0]);
-        return [Food.find({foodname: temp[0]}), log];
+        return [Food.findOne({foodname: temp[0]}), log];
       })
       .spread(function(food, log){
         //with the food object captured, I push it into the log array
         console.log("IT WILL BE OK", food)
-
-        log[0].log.push(food[0]);
-        return log[0].save();
+        if (log.log.indexOf(food.foodname) === -1) {
+        log.log.push(food.foodname);
+        return [log.save(), food];
+      }
+      //passed a filler variable incase it gets here instead of the above if statement
+        var x = null;
+        return [x, food];
       })
-      .then(function(data){
-        console.log("UMM", data)
-        response.send(data);
+      .spread(function(saved, food){
+        return Food.update({foodname: food.foodname},
+           {
+          $inc: {quantity: 1}
+        });
+      })
+      .then(function(updated){
+        console.log("UMM", updated)
+        response.send(updated);
       })
       .catch(function(err){
         console.log("NOOOO!!!", err.errors);

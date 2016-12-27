@@ -38,3 +38,10 @@ h6 {
 .list:hover{
   text-decoration: none;
 }
+.bold{
+  font-weight: bold;
+}
+
+.bottom {
+  margin-bottom: 50px;
+}

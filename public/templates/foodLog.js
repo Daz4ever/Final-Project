@@ -14,6 +14,12 @@ app.config(function($stateProvider, $urlRouterProvider){
     url: '/log/{logId}',
     templateUrl: 'log.html',
     controller: 'logController'
+  })
+  .state({
+    name: 'customfoods',
+    url: '/customfoods',
+    templateUrl: 'customfoods.html',
+    controller: 'customfoodsController'
   });
   $urlRouterProvider.otherwise('/');
 });
@@ -44,7 +50,7 @@ app.factory('foodlog', function factory($http, $rootScope, $cookies) {
     return $http ({
       method: 'POST',
       url: '/delete',
-      data: {id: id},
+      data: {id: id, username: "Dom"},
     });
   };
 
@@ -55,8 +61,17 @@ app.factory('foodlog', function factory($http, $rootScope, $cookies) {
       data: {
               id: id,
               food: food,
-              food_id: food_id
+              food_id: food_id,
+              username: "Dom"
             }
+    });
+  };
+
+  service.allsaved = function(){
+    return $http ({
+      method: 'GET',
+      url: '/allsaved',
+      params: {username: "Dom"}
     });
   };
 
@@ -72,7 +87,8 @@ app.factory('foodlog', function factory($http, $rootScope, $cookies) {
     var url = "https://api.nutritionix.com/v1_1/search/" + foodname + "?results=0%3A20&cal_min=0&cal_max=50000&fields=item_name%2Cnf_calories%2Cnf_total_fat%2Cnf_saturated_fat%2Cnf_cholesterol%2Cnf_sodium%2Cnf_total_carbohydrate%2Cnf_dietary_fiber%2Cnf_sugars%2Cnf_protein&appId=63be4ab8&appKey=060f94e8ed4e0561c70e4651b4983d87";
     return $http ({
       method: 'GET',
-      url: url
+      url: url,
+      params: {username: "Dom"}
     });
   };
   service.bigDataToMyDataBase = function(data){
@@ -137,6 +153,20 @@ foodlog.createlog()
 };
 });
 
+app.controller('customfoodsController', function($scope, foodlog){
+
+  $scope.custom = function(){
+
+    foodlog.allsaved()
+    .success(function(data){
+
+    }).
+    error(function(data){
+      console.log("failed");
+    });
+  };
+
+});
 
 
 app.controller('logController', function($scope, foodlog, $state, $stateParams) {
@@ -149,6 +179,63 @@ foodlog.foodListInLog($scope.logId)
 .success(function(data){
   console.log("WHAT?", data);
   $scope.food = data;
+
+var sumQty = 0;
+var sumCal = 0;
+var sumTFat = 0;
+var sumFat = 0;
+var sumCho = 0;
+var sumSo = 0;
+var sumCarb = 0;
+var sumFi = 0;
+var sumSug = 0;
+var sumPro = 0;
+
+
+  data.forEach(function(food){
+    if(food.quantity){
+      sumQty += food.quantity;
+    }
+    if(food.calories){
+      sumCal += food.calories;
+    }
+    if(food.totalFat){
+      sumTFat += food.totalFat;
+    }
+    if(food.saturatedFat){
+      sumFat += food.saturatedFat;
+    }
+    if(food.cholesterol){
+      sumCho += food.cholesterol;
+    }
+    if(food.sodium){
+      sumSo += food.sodium;
+    }
+    if(food.carbohydrates){
+      sumCarb += food.carbohydrates;
+    }
+    if(food.fiber){
+      sumFi += food.fiber;
+    }
+    if(food.sugars){
+      sumSug += food.sugars;
+    }
+    if(food.protein){
+      sumPro += food.protein;
+    }
+
+  });
+  $scope.sumCal = sumCal;
+  $scope.sumQty = sumQty;
+  $scope.sumTFat = sumTFat;
+  $scope.sumFat = sumFat;
+  $scope.sumCho = sumCho;
+  $scope.sumSo = sumSo;
+  $scope.sumCarb = sumCarb;
+  $scope.sumFi = sumFi;
+  $scope.sumSug = sumSug;
+  $scope.sumPro = sumPro;
+
 
 })
 .error(function(data){

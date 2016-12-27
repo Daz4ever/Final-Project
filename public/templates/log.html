@@ -8,15 +8,17 @@
 
 <form class="formspace">
     <div class="form-group">
-      <label >My Saved Foods</label>
+      <label >My Custom Entered Foods</label>
       <input ng-model="foodname2" name="food" type="text" class="form-control" placeholder="Enter a food">
     </div>
   <button style="color: black;" ng-click="submitSavedFoods()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
 </form>
 
+<button class="formspace btn btn-default" style="color: black;" ng-click="custom()" type="submit" method="post" name="button">All Custom Foods</button>
 
 
-<table class="table space">
+
+<table class="table space bottom">
   <thead>
     <tr>
       <th>#</th>
@@ -42,26 +44,27 @@
 
       <td>{{foods.foodname}}</td>
       <td>{{foods.quantity}}</td>
-      <td>{{foods.quantity * foods.calories}}</td>
-      <td>{{foods.totalFat}}</td>
-      <td>{{foods.saturatedFat}}</td>
-      <td>{{foods.cholesterol}}</td>
-      <td>{{foods.sodium}}</td>
-      <td>{{foods.carbohydrates}}</td>
-      <td>{{foods.fiber}}</td>
-      <td>{{foods.sugars}}</td>
-      <td>{{foods.protein}}</td>
+      <td>{{foods.quantity * foods.calories | number: 2}}</td>
+      <td>{{foods.quantity * foods.totalFat | number: 2}}</td>
+      <td>{{foods.quantity * foods.saturatedFat | number: 2}}</td>
+      <td>{{foods.quantity * foods.cholesterol | number: 2}}</td>
+      <td>{{foods.quantity * foods.sodium | number: 2}}</td>
+      <td>{{foods.quantity * foods.carbohydrates | number: 2}}</td>
+      <td>{{foods.quantity * foods.fiber | number: 2}}</td>
+      <td>{{foods.quantity * foods.sugars | number: 2}}</td>
+      <td>{{foods.quantity * foods.protein | number: 2}}</td>
       <td><button type="button" name="button" class="btn btn-primary">Edit</button></td>
       <td><button ng-click="deleteFoods(foods.foodname, foods._id)" type="button" name="button" class="btn btn-danger">Delete</button></td>
 
 
     </tr>
+
     <tr>
       <th>
         <form class=""  method="post">
 
 
-      <td>  <input ng-model ="myfood" name="food" type="text" class="form-control" placeholder="Enter Food">
+      <td>  <input ng-model ="myfood" name="food" type="text" class="form-control" placeholder="Food">
       </td>
       <td>  <input ng-model="quantity" name="food" type="text" class="form-control" placeholder="Qty">
       </td>
@@ -86,6 +89,27 @@
       <td><button ng-click="createSavedFood()" type="button" name="button" class="btn btn-success">Submit</button></td>
           </form>
       </th>
+    </tr>
+    <tr>
+      <th scope="row">&#x221e;</th>
+
+      <td class="bold">Total</td>
+      <td class="bold">{{sumQty}}</td>
+      <td class="bold">{{sumCal | number: 2}}</td>
+      <td class="bold">{{sumTFat | number: 2}}</td>
+      <td class="bold">{{sumFat | number: 2}}</td>
+      <td class="bold">{{sumCho | number: 2}}</td>
+      <td class="bold">{{sumSo | number: 2}}</td>
+      <td class="bold">{{sumCarb | number: 2}}</td>
+      <td class="bold">{{sumFi | number: 2}}</td>
+      <td class="bold">{{sumSug | number: 2}}</td>
+      <td class="bold">{{sumPro | number: 2}}</td>
+
+
+
+
+
+
     </tr>
   </tbody>
 </table>
