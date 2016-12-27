@@ -156,6 +156,7 @@ app.post('/foodToDatabase', function(request, response) {
     return log.save();
   }
 
+console.log("HOLDUP");
 
     return(user);
   })
@@ -251,20 +252,25 @@ app.post('/createsavedfood', function(request, response){
 
     if (log.log.indexOf(data.food.foodname) === -1) {
     log.log.push(data.food.foodname);
-    saved.saved.push(data.food.foodname);
-    return [log.save(), saved.save()];
+    return [log.save(), MySaved.findOne({username: data.username})];
     }
-
+    //saved needs to happen independent of log
+  });
+   return MySaved.findOne({username: data.username})
+    .then(function(saved){
+      if (saved.saved.indexOf(data.food.foodname) === -1) {
+      saved.saved.push(data.food.foodname);
+      return log.save();
+      }
 
     //most likely the food is being created for the first time but used upsert
     //incase user tries to make another food with the same name. The food will be updated
     //if it exist already or created if it doesnt exist yet
       return Food.update({
       foodname: data.food.foodname}, {
-
+      $inc: {quantity: 1},
       $set: {
       foodname: data.food.foodname,
-      quantity: data.food.quantity,
       calories: data.food.calories,
       totalFat: data.food.total_fat,
       saturatedFat: data.food.saturated_fat,
@@ -278,10 +284,9 @@ app.post('/createsavedfood', function(request, response){
     }}, {
       upsert: true
     }
-    );
-
+  );
   })
-  .then(function(){
+  .then(function(updated){
     //why does adding a semicolon after the return statement pass a value of nothing??
     return Food.findOne({foodname:data.food.foodname})
   })
