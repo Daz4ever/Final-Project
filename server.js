@@ -16,41 +16,42 @@ mongoose.connect('mongodb://localhost/foodlog_db');
 var randomToken = uuidV1();
 
 const User = mongoose.model('User', {
- username: { type: String, required: true },
- password: { type: String, required: true },
- token: String,
- date: Date
+  username: { type: String, required: true },
+  password: { type: String, required: true },
+  token: String,
+  date: Date
 });
 
 const Food = mongoose.model('Food', {
- foodname: { type: String, required: true },
- quantity: Number,
- calories: Number,
- totalFat: Number,
- saturatedFat: Number,
- cholesterol: Number,
- sodium: Number,
- carbohydrates: Number,
- fiber: Number,
- sugars: Number,
- protein: Number,
- username: String,
- userId: ObjectId
- });
+  foodname: { type: String, required: true },
+  quantity: Number,
+  calories: Number,
+  totalFat: Number,
+  saturatedFat: Number,
+  cholesterol: Number,
+  sodium: Number,
+  carbohydrates: Number,
+  fiber: Number,
+  sugars: Number,
+  protein: Number,
+  username: String,
+  date: Date,
+  userId: ObjectId
+});
 
 
 
- const Log = mongoose.model('Log', {
-   log: [String],
-   date: Date,
-   username: String
- });
+const Log = mongoose.model('Log', {
+  log: [{foodname: String, date: Date},],
+  date: Date,
+  username: String
+});
 
 
- const MySaved = mongoose.model('MySaved', {
-   saved: [String],
-   username: String
- });
+const MySaved = mongoose.model('MySaved', {
+  saved: [String],
+  username: String
+});
 
 // var newsaved = new MySaved({
 //   saved: [],
@@ -84,7 +85,6 @@ app.post('/delete', function(request, response){
 app.get('/createlog', function(request, response){
 
   var username = request.query.username;
-
   var newLog = Log({
     log: [],
     date: new Date(),
@@ -93,10 +93,27 @@ app.get('/createlog', function(request, response){
   return newLog.save()
   .then(function(data){
     response.send(data);
-})
-.catch(function(err){
-  console.log("CRAP", err.errors);
+  })
+  .catch(function(err){
+    console.log("CRAP", err.errors);
+  });
 });
+app.post('/deletesavedfoods', function(request, response){
+  var foodname = request.body.foodname;
+  var username = request.body.username;
+  MySaved.findOne({username: username})
+  .then(function(saved){
+    console.log(saved._id)
+    return MySaved.update({_id: saved._id},
+      {$pull: {saved: foodname}});
+  })
+  .then(function(updated){
+    response.send(updated);
+  })
+  .catch(function(err){
+    console.log(err.errors);
+  });
+
 });
 
 app.post('/delfoods', function(request, response){
@@ -108,36 +125,39 @@ app.post('/delfoods', function(request, response){
   Food.findOne({_id: foodId})
   .then(function(foodfound){
     console.log("MYFOOD", foodfound);
-  console.log("QUAN", foodfound.quantity);
-return [Food.update({_id: foodfound._id},{
-  $inc: {quantity: -1}}
-), foodfound];
-})
-.spread(function(update, foodfound){
+    console.log("QUAN", foodfound.quantity);
+    return [Food.update({_id: foodfound._id},{
+      $inc: {quantity: -1}}
+    ), foodfound, Log.findOne({_id: id})];
+  })
+  .spread(function(update, foodfound, log){
     console.log("QUAN2", foodfound.quantity);
-    if(foodfound.quantity <= 0) {
-    //update the Log by "pulling" food from the log array
-    return Log.update({_id: id},
-      {$pull: {log: foodfound.foodname}})
-    // .then(function(data){
-    //   console.log("GONE!", data);
-    //   return Food.remove({ _id: foodId });
-    .then(function(){
-      response.send("REMOVED");
+    if(foodfound.quantity <= 1) {
+
+      log.log.forEach(function(object){
+        console.log(object);
+        console.log(foodfound.foodname);
+        if (object.foodname === foodfound.foodname){
+          return Log.update({_id: id},
+            {$pull: {log: object._id}});
+      }
+    })
+        .then(function(){
+          response.send("REMOVED");
+        })
+        .catch(function(err){
+          console.log(err.errors);
+        });
+      }
+      else{
+        response.send("quantity - 1");
+      }
     })
     .catch(function(err){
       console.log(err.errors);
     });
-  }
-  else{
-    response.send("quantity - 1");
-  }
-  })
-  .catch(function(err){
-    console.log(err.errors);
-  });
 
-});
+  });
 
 
 app.post('/foodToDatabase', function(request, response) {
@@ -145,42 +165,57 @@ app.post('/foodToDatabase', function(request, response) {
   console.log("Here! OK", data.logId);
   User.findOne({username: data.username})
   .then(function(user){
-  console.log(data.username);
-  return [Log.findOne({_id: data.logId}), user]
-})
-  .spread(function(log, user){
-//add foodname to log if it doesn't already exist. This must be done before creating
-//or updating the food otherwise you'll always have a food to add to the log even if its a duplicate.
-    if (log.log.indexOf(data.food.item_name) === -1) {
-    log.log.push(data.food.item_name);
-    return log.save();
-  }
-
-console.log("HOLDUP");
-
-    return(user);
+    console.log(data.username);
+    return [Log.findOne({_id: data.logId}), user];
   })
-  .then(function(user){
+  .spread(function(log, user){
+    console.log("TTT", data.food);
+    //add foodname to log if it doesn't already exist. This must be done before creating
+    //or updating the food otherwise you'll always have a food to add to the log even if its a duplicate.
+    console.log("WILL THIS WORK?", log.date.toDateString());
+      var matches;
+    log.log.forEach(function(object){
+      console.log(object.foodname, "Space", data.food.item_name);
+      console.log(object.date.toDateString(), "Space", log.date);
+      if(object.foodname === data.food.item_name && object.date.toDateString() === log.date.toDateString()){
+        matches = true;
+      }
+    });
+      if(!matches){
+        console.log("HEREEEE");
+
+      log.log.push({foodname: data.food.item_name, date: datadate});
+      console.log(log.log);
+      return [log.save()];
+    }
+  })
+  .then(function(){
+    //had to find log again because it didnt like when I used spread after putting an object in an array
+    return [Log.findOne({_id: data.logId}), data.username];
+  })
+  .spread(function(log, user){
     //update the same information if its already there (so you don't create duplicates)
     //or create a new food item to be saved in the database
     return Food.update({
-      foodname: data.food.item_name
+      foodname: data.food.item_name,
+      date: log.date
     }, {
       $inc: {quantity: 1},
       $set: {
 
-      foodname: data.food.item_name,
-      calories: data.food.nf_calories,
-      totalFat: data.food.nf_total_fat,
-      saturatedFat: data.food.nf_saturated_fat,
-      cholesterol: data.food.nf_cholesterol,
-      sodium: data.food.nf_sodium,
-      carbohydrates: data.food.nf_total_carbohydrate,
-      fiber: data.food.nf_dietary_fiber,
-      sugars: data.food.nf_sugars,
-      protein: data.food.nf_protein,
-      username: user.username
-    }
+        foodname: data.food.item_name,
+        calories: data.food.nf_calories,
+        totalFat: data.food.nf_total_fat,
+        saturatedFat: data.food.nf_saturated_fat,
+        cholesterol: data.food.nf_cholesterol,
+        sodium: data.food.nf_sodium,
+        carbohydrates: data.food.nf_total_carbohydrate,
+        fiber: data.food.nf_dietary_fiber,
+        sugars: data.food.nf_sugars,
+        protein: data.food.nf_protein,
+        username: user,
+        date: log.date
+      }
     }, {
       upsert: true
     });
@@ -194,63 +229,67 @@ console.log("HOLDUP");
     response.send(err.message);
     console.log(err.stack);
   });
-  });
+});
 
 app.post('/submitsavedfoods', function(request, response){
   var data = request.body;
   console.log("999", data.food)
   User.findOne({username: data.username})
   .then(function(user){
-      return [Log.findOne({ _id: data.logId }), MySaved.findOne({username: data.username})]
-      })
-      .spread(function(log, mysaved){
-        //need to grab the food from saved in Mysaved collection... then push it to log, then send the food
-        console.log("YEEEHAWWWW!", mysaved.saved)
+    return [Log.findOne({ _id: data.logId }), MySaved.findOne({username: data.username})]
+  })
+  .spread(function(log, mysaved){
+    //need to grab the food from saved in Mysaved collection... then push it to log, then send the food
+    console.log("YEEEHAWWWW!", mysaved.saved)
 
-        //the saved array has objects but I just want to find the foodname that matches so I made a temp array
-        //and push just the foodnames in them if they match
-
-
-          var temp =[];
-
-        mysaved.saved.forEach(function(object){
-          console.log("YESSS", object);
-          if (object === data.food) {
-            temp.push(object);
-          }
-          console.log("RRRR", temp);
-        });
+    //the saved array has objects but I just want to find the foodname that matches so I made a temp array
+    //and push just the foodnames in them if they match
 
 
-        console.log("PLEASE WORK!", temp[0]);
-        return [Food.findOne({foodname: temp[0]}), log];
-      })
-      .spread(function(food, log){
-        //with the food object captured, I push it into the log array
-        console.log("IT WILL BE OK", food)
-        if (log.log.indexOf(food.foodname) === -1) {
-        log.log.push(food.foodname);
-        return [log.save(), food];
+    var temp =[];
+
+    mysaved.saved.forEach(function(object){
+      console.log("YESSS", object);
+      if (object === data.food) {
+        temp.push(object);
       }
-      //passed a filler variable incase it gets here instead of the above if statement
-        var x = null;
-        return [x, food];
-      })
-      .spread(function(saved, food){
-        return Food.update({foodname: food.foodname},
-           {
-          $inc: {quantity: 1}
-        });
-      })
-      .then(function(updated){
-        console.log("UMM", updated)
-        response.send(updated);
-      })
-      .catch(function(err){
-        console.log("NOOOO!!!", err.errors);
-        response.send(err.message);
-        console.log(err.stack);
+      console.log("RRRR", temp);
+    });
+
+
+    console.log("PLEASE WORK!", temp[0]);
+    return [Food.findOne({foodname: temp[0]}), log];
+  })
+  .spread(function(food, log){
+    //with the food object captured, I push it into the log array if its not already there
+    console.log("IT WILL BE OK", food)
+    if(food === null){
+      response.send("You never created that food!")
+      return;
+    }
+    else if (log.log.indexOf(food.foodname) === -1) {
+      log.log.push(food.foodname);
+      return [log.save(), food];
+    }
+    //passed a filler variable incase it gets here instead of the above if statement
+    var x = null;
+    return [x, food];
+  })
+  .spread(function(saved, food){
+    return Food.update({foodname: food.foodname},
+      {
+        $inc: {quantity: 1}
       });
+    })
+    .then(function(updated){
+      console.log("UMM", updated)
+      response.send(updated);
+    })
+    .catch(function(err){
+      console.log("NOOOO!!!", err.errors);
+      response.send(err.message);
+      console.log(err.stack);
+    });
   });
 
 app.post('/createsavedfood', function(request, response){
@@ -261,53 +300,80 @@ app.post('/createsavedfood', function(request, response){
     //add foodname to log(array) and saved(array) if it doesn't already exist. This must be done before creating the food otherwise you'll always have a food to add to the log even if its a duplicate.
 
     if (log.log.indexOf(data.food.foodname) === -1) {
-    log.log.push(data.food.foodname);
-    return [log.save(), MySaved.findOne({username: data.username})];
+      log.log.push(data.food.foodname);
+      return [log.save(), MySaved.findOne({username: data.username})];
     }
     //saved needs to happen independent of log
   });
-   return MySaved.findOne({username: data.username})
-    .then(function(saved){
-      if (saved.saved.indexOf(data.food.foodname) === -1) {
+  return MySaved.findOne({username: data.username})
+  .then(function(saved){
+    if (saved.saved.indexOf(data.food.foodname) === -1) {
       saved.saved.push(data.food.foodname);
-      return log.save();
-      }
+      return saved.save();
+    }
 
+    var x = null;
+    return x;
+  })
+  .then(function(saved){
+    //finding log so that the date always matches the food for that log
+    return Log.findOne({_id: data.logId});
+  })
+  .then(function(log){
     //most likely the food is being created for the first time but used upsert
     //incase user tries to make another food with the same name. The food will be updated
     //if it exist already or created if it doesnt exist yet
-      return Food.update({
+    console.log("@@@", log.date);
+    return Food.update({
       foodname: data.food.foodname}, {
-      $inc: {quantity: 1},
-      $set: {
-      foodname: data.food.foodname,
-      calories: data.food.calories,
-      totalFat: data.food.total_fat,
-      saturatedFat: data.food.saturated_fat,
-      cholesterol: data.food.cholesterol,
-      sodium: data.food.sodium,
-      carbohydrates: data.food.carbohydrates,
-      fiber: data.food.fiber,
-      sugars: data.food.sugars,
-      protein: data.food.protein,
-      username: data.username
-    }}, {
-      upsert: true
-    }
-  );
-  })
-  .then(function(updated){
-    //why does adding a semicolon after the return statement pass a value of nothing??
-    return Food.findOne({foodname:data.food.foodname})
-  })
-  .then(function(food){
-    response.send(food);
+        $inc: {quantity: 1},
+        $set: {
+          foodname: data.food.foodname,
+          check:  {
+                    foodname: data.food.foodname,
+                    date: log.date
+                  },
+          calories: data.food.calories,
+          totalFat: data.food.total_fat,
+          saturatedFat: data.food.saturated_fat,
+          cholesterol: data.food.cholesterol,
+          sodium: data.food.sodium,
+          carbohydrates: data.food.carbohydrates,
+          fiber: data.food.fiber,
+          sugars: data.food.sugars,
+          protein: data.food.protein,
+          username: data.username,
+          date: log.date
+        }}, {
+          upsert: true
+        }
+      );
+    })
+    .then(function(updated){
+      //why does adding a semicolon after the return statement pass a value of nothing??
+      return Food.findOne({foodname:data.food.foodname})
+    })
+    .then(function(food){
+      response.send(food);
+    })
+    .catch(function(err){
+      console.log("OH NOOOO!!!", err.errors);
+      console.log(err.stack);
+      response.send(err.message);
+    });
+  });
+
+app.get('/allsaved', function(request, response){
+  var username = request.query.username;
+  console.log("YOOOOO", username)
+  MySaved.findOne({username: username})
+  .then(function(saved){
+    response.send(saved);
   })
   .catch(function(err){
-    console.log("OH NOOOO!!!", err.errors);
     console.log(err.stack);
-    response.send(err.message);
-});
+  });
+
 });
 
 app.get('/log/:id', function(request, response){
@@ -317,27 +383,31 @@ app.get('/log/:id', function(request, response){
     _id: theId
   })
   .then(function(data){
-    console.log("OMG WHY???", data.log);
+    var temp = [];
+    data.log.forEach(function(object){
+      temp.push(object.foodname);
+    })
+    console.log("OMG WHY???", temp);
 
-      //filter through all foods in log
+    //filter through all foods in log
 
     return Food.find({
       foodname: {
-      $in:
-      data.log
-    }
+        $in:
+        temp
+      }
     });
-    })
-    .then(function(foods){
-      console.log("hello", foods)
-        response.send(foods);
-    })
-    .catch(function(err){
-      console.log("NOOOO!!!", err.errors);
-});
+  })
+  .then(function(foods){
+    console.log("hello", foods)
+    response.send(foods);
+  })
+  .catch(function(err){
+    console.log("NOOOO!!!", err.errors);
+  });
 });
 
 
- app.listen(3000, function() {
-   console.log('I am listening.');
- });
+app.listen(5000, function() {
+  console.log('I am listening.');
+});

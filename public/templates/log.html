@@ -4,6 +4,7 @@
       <input ng-model="foodname" name="food" type="text" class="form-control" placeholder="Enter a food">
     </div>
   <button style="color: black;" ng-click="submitFood()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
+    <h3 ng-show="enteredNada">Enter a food name!</h3>
 </form>
 
 <form class="formspace">
@@ -12,9 +13,13 @@
       <input ng-model="foodname2" name="food" type="text" class="form-control" placeholder="Enter a food">
     </div>
   <button style="color: black;" ng-click="submitSavedFoods()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
+  <h3 ng-show="enteredNada2">Enter a food name!</h3>
+  <h3 ng-show="notfound">You never created that food!</h3>
 </form>
 
-<button class="formspace btn btn-default" style="color: black;" ng-click="custom()" type="submit" method="post" name="button">All Custom Foods</button>
+</div>
+
+<button class="formspace btn btn-default" style="color: black;" ng-click="custom()" type="submit" method="post" name="button">Stored Custom Foods</button>
 
 
 

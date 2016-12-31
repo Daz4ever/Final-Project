@@ -41,7 +41,14 @@ h6 {
 .bold{
   font-weight: bold;
 }
+.customfoods {
+  list-style: none;
+  padding: 10px;
+}
 
 .bottom {
   margin-bottom: 50px;
+}
+.big{
+  font-size: 1.5em;
 }
