@@ -4,6 +4,14 @@
       <input ng-model="foodname" name="food" type="text" class="form-control" placeholder="Enter a food">
     </div>
   <button style="color: black;" ng-click="submitFood()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
+  <form ng-show="foodoptions" class="" action="index.html" method="post">
+    <select  id="number">
+    <option ng-repeat="food in foodsmany" ng-model="foody">{{food.item_name}}</option>
+
+  </select>
+  <input type="submit" ng-click="toDataBase()" value="Submit">
+  </form>
+
     <h3 ng-show="enteredNada">Enter a food name!</h3>
 </form>
 
@@ -57,7 +65,6 @@
       <td>{{foods.quantity * foods.fiber | number: 2}}</td>
       <td>{{foods.quantity * foods.sugars | number: 2}}</td>
       <td>{{foods.quantity * foods.protein | number: 2}}</td>
-      <td><button ng-click="toggleEdit()" type="button" name="button" class="btn btn-primary">Edit</button></td>
       <td><button ng-click="deleteFoods(foods.foodname, foods._id)" type="button" name="button" class="btn btn-danger">Delete</button></td>
 
 
@@ -90,7 +97,7 @@
       </td>
       <td>  <input ng-model="protein" name="food" type="text" class="form-control" placeholder="Protein">
       </td>
-      <td><button ng-click="createSavedFood()" type="button" name="button" class="btn btn-success">Submit</button></td>
+      <td><button ng-click="createSavedFood()" type="button" name="button" class="btn btn-success">Submit/Edit</button></td>
           </form>
       </th>
     </tr>
@@ -115,5 +122,8 @@
 
 
     </tr>
+
   </tbody>
+
 </table>
+<div class="formspace"><h5> *You can edit foods that exist by using the same food name in the edit field*</h5></div>

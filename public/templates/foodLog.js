@@ -323,31 +323,38 @@ app.controller('logController', function($scope, foodlog, $state, $stateParams) 
 
       foodlog.searchBigData(foodname)
       .success(function(data){
-        console.log(data.hits[0].fields);
+
         $scope.fooditem = data.hits[0].fields;
+        var foodmany = data.hits.slice(0,5);
 
+        var temp = [];
+        foodmany.forEach(function(object){
+          temp.push(object.fields);
+        });
+        $scope.foodsmany = temp
+        console.log("111", temp);
+        $scope.foodoptions = false;
       })
-      .success(function(){
-        var data = {
-          username: "Dom",
-          food: $scope.fooditem,
-          fooddate: $scope.fooddate,
-          logId: $scope.logId
-        };
-        foodlog.bigDataToMyDataBase(data)
-        .success(function(data){
-          console.log("HELLO", data);
-          generateAllFoods();
-
-
-
-        })
         .error(function(data){
           console.log("failed");
         });
-      });
     }
   };
+$scope.toDataBase = function(){
+  console.log("000", $scope.foody);
+  var data = {
+    username: "Dom",
+    food: $scope.foody,
+    fooddate: $scope.fooddate,
+    logId: $scope.logId
+  };
+
+  foodlog.bigDataToMyDataBase(data)
+  .success(function(data){
+    console.log("HELLO", data);
+    generateAllFoods();
+  });
+};
 
   $scope.createSavedFood = function(){
     var createfood = null;
@@ -356,7 +363,10 @@ app.controller('logController', function($scope, foodlog, $state, $stateParams) 
       $scope.nothingHere = true;
     }
     else{
-      $scope.myfood = $scope.myfood.toLowerCase();
+      $scope.myfood = $scope.myfood.toLowerCase()
+        .split(' ').map(function(word) {
+            return word[0].toUpperCase() + word.substr(1);
+        }).join(' ');
 
       createdfood = {
         foodname: $scope.myfood,
@@ -405,7 +415,11 @@ app.controller('logController', function($scope, foodlog, $state, $stateParams) 
     }
     else{
 
-      foodname2 = $scope.foodname2.toLowerCase();
+      foodname2 = $scope.foodname2.toLowerCase()
+        .split(' ').map(function(word) {
+            return word[0].toUpperCase() + word.substr(1);
+        }).join(' ');
+
       var data = {
         username: "Dom",
         food: foodname2,
