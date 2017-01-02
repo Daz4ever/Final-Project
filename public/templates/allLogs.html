@@ -4,3 +4,4 @@
   <button ng-click="deleteLogPage(log._id)" type="button" name="button" class="btn btn-danger">Delete</button>
 </div><br>
   <button ng-click="createLog()" type="button" name="button">Create a Log</button>
+    <h3 ng-show="failed">You already created a log for {{today}}!</h3>

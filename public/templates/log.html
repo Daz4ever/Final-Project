@@ -17,7 +17,6 @@
   <h3 ng-show="notfound">You never created that food!</h3>
 </form>
 
-</div>
 
 <button class="formspace btn btn-default" style="color: black;" ng-click="custom()" type="submit" method="post" name="button">Stored Custom Foods</button>
 
@@ -58,7 +57,7 @@
       <td>{{foods.quantity * foods.fiber | number: 2}}</td>
       <td>{{foods.quantity * foods.sugars | number: 2}}</td>
       <td>{{foods.quantity * foods.protein | number: 2}}</td>
-      <td><button type="button" name="button" class="btn btn-primary">Edit</button></td>
+      <td><button ng-click="toggleEdit()" type="button" name="button" class="btn btn-primary">Edit</button></td>
       <td><button ng-click="deleteFoods(foods.foodname, foods._id)" type="button" name="button" class="btn btn-danger">Delete</button></td>
 
 

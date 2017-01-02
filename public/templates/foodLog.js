@@ -153,11 +153,20 @@ app.controller('alllogsController', function($scope, $state, foodlog) {
     foodlog.createlog()
     .success(function(data){
       console.log("888", data);
-      $state.go('log', {logId: data._id });
+      $scope.today = new Date().toDateString();
+      if (data === "You already created a log for" + $scope.today + "!"){
+        $scope.failed = true;
+        //used timeout so flash statement disappears after user re-enters in input bar
+        setTimeout(function(){$scope.failed = false}, 1000);
+        setTimeout(function(){alllogs();}, 2500);
+      }else {
+        $state.go('log', {logId: data._id });
+      }
+
 
     })
     .error(function(data){
-      console.log("failed");
+      console.log("I'm over here, failed");
     });
   };
 });

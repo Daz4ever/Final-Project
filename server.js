@@ -83,19 +83,38 @@ app.post('/delete', function(request, response){
 });
 
 app.get('/createlog', function(request, response){
-
   var username = request.query.username;
+  var today = new Date().toDateString();
+  console.log(" do I get here?");
+  Log.find({username: username})
+.then(function(log){
+  console.log(log);
+
+  log.forEach(function(object){
+    if (object.date.toDateString() === today){
+      console.log("BBB", object.date.toDateString())
+      console.log("BBB", today)
+      response.send("You already created a log for" + today + "!");
+        return;
+    }
+  });
+  if (response.headersSent) {
+    return;
+  }
   var newLog = Log({
     log: [],
     date: new Date(),
     username: username
   });
-  return newLog.save()
+  return newLog.save();
+})
   .then(function(data){
+
     response.send(data);
   })
   .catch(function(err){
     console.log("CRAP", err.errors);
+    console.log("CRAP", err.stack);
   });
 });
 app.post('/deletesavedfoods', function(request, response){
@@ -184,7 +203,7 @@ app.post('/foodToDatabase', function(request, response) {
       if(!matches){
         console.log("HEREEEE");
 
-      log.log.push({foodname: data.food.item_name, date: datadate});
+      log.log.push({foodname: data.food.item_name, date: log.date});
       console.log(log.log);
       return [log.save()];
     }
@@ -299,10 +318,21 @@ app.post('/createsavedfood', function(request, response){
 
     //add foodname to log(array) and saved(array) if it doesn't already exist. This must be done before creating the food otherwise you'll always have a food to add to the log even if its a duplicate.
 
-    if (log.log.indexOf(data.food.foodname) === -1) {
-      log.log.push(data.food.foodname);
-      return [log.save(), MySaved.findOne({username: data.username})];
+    var matches;
+  log.log.forEach(function(object){
+    console.log(object.foodname, "Spacedout", data.food.foodname);
+    console.log(object.date.toDateString(), "Spacedout", log.date);
+    if(object.foodname === data.food.foodname && object.date.toDateString() === log.date.toDateString()){
+      matches = true;
     }
+  });
+    if(!matches){
+      console.log("OK HEREEEE");
+
+    log.log.push({foodname: data.food.foodname, date: log.date});
+    console.log(log.log);
+    return [log.save()];
+  }
     //saved needs to happen independent of log
   });
   return MySaved.findOne({username: data.username})
@@ -317,22 +347,19 @@ app.post('/createsavedfood', function(request, response){
   })
   .then(function(saved){
     //finding log so that the date always matches the food for that log
-    return Log.findOne({_id: data.logId});
+    return Log.findOne({_id: data.id});
   })
   .then(function(log){
     //most likely the food is being created for the first time but used upsert
-    //incase user tries to make another food with the same name. The food will be updated
+    //incase user tries to make another food with the same name and date. The food will be updated
     //if it exist already or created if it doesnt exist yet
+
     console.log("@@@", log.date);
     return Food.update({
-      foodname: data.food.foodname}, {
-        $inc: {quantity: 1},
+      foodname: data.food.foodname, date: log.date}, {
         $set: {
           foodname: data.food.foodname,
-          check:  {
-                    foodname: data.food.foodname,
-                    date: log.date
-                  },
+          quantity: data.food.quantity,
           calories: data.food.calories,
           totalFat: data.food.total_fat,
           saturatedFat: data.food.saturated_fat,
@@ -350,8 +377,10 @@ app.post('/createsavedfood', function(request, response){
       );
     })
     .then(function(updated){
-      //why does adding a semicolon after the return statement pass a value of nothing??
-      return Food.findOne({foodname:data.food.foodname})
+      return Log.findOne({_id: data.id});
+    })
+    .then(function(log){
+      return Food.findOne({foodname:data.food.foodname, date: log.date});
     })
     .then(function(food){
       response.send(food);
