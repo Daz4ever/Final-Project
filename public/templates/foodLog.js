@@ -310,12 +310,14 @@ app.controller('logController', function($scope, foodlog, $state, $stateParams) 
   var foodname = null;
   var foodname2 = null;
 
-  $scope.submitFood =function(){
+  $scope.submitbut = true;
 
+  $scope.submitFood =function(){
+    $scope.submitbut = false;
     foodname = $scope.foodname;
     console.log("BAH", foodname);
     if(foodname === undefined) {
-      $scope.enteredNada = true;
+
       //used timeout so flash statement disappears after user re-enters in input bar
       setTimeout(function(){$scope.enteredNada = false}, 2000);
     }
@@ -333,14 +335,19 @@ app.controller('logController', function($scope, foodlog, $state, $stateParams) 
         });
         $scope.foodsmany = temp
         console.log("111", temp);
-        $scope.foodoptions = false;
+        $scope.foodoptions = true;
+
       })
         .error(function(data){
           console.log("failed");
         });
     }
   };
+
+
 $scope.toDataBase = function(){
+  $scope.submitbut = true;
+  $scope.foodoptions = false;
   console.log("000", $scope.foody);
   var data = {
     username: "Dom",
@@ -348,6 +355,7 @@ $scope.toDataBase = function(){
     fooddate: $scope.fooddate,
     logId: $scope.logId
   };
+
 
   foodlog.bigDataToMyDataBase(data)
   .success(function(data){

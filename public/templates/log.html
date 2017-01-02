@@ -3,14 +3,14 @@
       <label >Food Database</label>
       <input ng-model="foodname" name="food" type="text" class="form-control" placeholder="Enter a food">
     </div>
-  <button style="color: black;" ng-click="submitFood()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
-  <form ng-show="foodoptions" class="" action="index.html" method="post">
-    <select  id="number">
+  <button ng-show="submitbut" style="color: black;" ng-click="submitFood()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
+  <div ng-show="foodoptions">
+    <select>
     <option ng-repeat="food in foodsmany" ng-model="foody">{{food.item_name}}</option>
-
   </select>
-  <input type="submit" ng-click="toDataBase()" value="Submit">
-  </form>
+  <br><br>
+  <button type="submit" ng-click="toDataBase()">Submit</button>
+</div>
 
     <h3 ng-show="enteredNada">Enter a food name!</h3>
 </form>
