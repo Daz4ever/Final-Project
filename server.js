@@ -58,6 +58,97 @@ const MySaved = mongoose.model('MySaved', {
 //   username: "Dom"
 // });
 // newsaved.save()
+app.post('/signup', function(request, response){
+var userdata = request.body;
+console.log(userdata);
+  if(userdata.password === userdata.password2) {
+    bcrypt.genSalt(10)
+    .then(function(salt){
+      return bcrypt.hash(request.body.password, salt);
+    })
+    .then(function(encryptedpass) {
+      console.log(encryptedpass);
+      var newUser = new User({
+        username: userdata.username,
+        password: encryptedpass
+      });
+      return newUser.save();
+
+    })
+    .then(function(){
+      var newsaved = new MySaved({
+        saved: [],
+        username: userdata.username
+      });
+      newsaved.save();
+    })
+    .then(function(){
+      response.send("Success!");
+    })
+    .catch(function(err){
+      console.log("AHHHH",  err.stack);
+    });
+  }
+  else{
+    response.status(400);
+    response.json("passwords don't match");
+  }
+ });
+
+ app.post('/login', function(request, response) {
+   var userdata = request.body;
+   console.log("XXXXXXXXXX", userdata);
+   User.findOne({ username: userdata.username})
+   .then(function(user){
+     console.log(userdata.password);
+     console.log(user.password);
+     return [user, bcrypt.compare(userdata.password, user.password)];
+         //bcrypt.compare === true or false
+   })
+   .spread(function(user, boolean) {
+     if (boolean === true) {
+       console.log("Login Success");
+       user.token = randomToken;
+       return user.save();
+     }
+     else {
+       console.log("Login Failed");
+       response.status(401);
+       response.send('Login Failed');
+     }
+   })
+   .then(function(user) {
+     if (response.headersSent) {
+       return;
+     }
+     response.send(user);
+   })
+   .catch(function(err){
+     console.log('OMG ERROR: ', err.message);
+
+   });
+ });
+
+
+ function auth(request, response, next) {
+   //verify auth token
+   var token = request.query.token;
+   User.find({token: token})
+   .then(function(user){
+     if(user.token === token) {
+
+       next();
+     } else {
+       response.status(401);
+       response.json({error: "you are not logged in"});
+     }
+
+
+ });
+ }
+
+ app.use(auth);
+
 app.get('/alllogs', function(request, response){
   var username = request.query.username;
   Log.find({username: username})
@@ -150,6 +241,7 @@ app.post('/delfoods', function(request, response){
     ), foodfound, Log.findOne({_id: id})];
   })
   .spread(function(update, foodfound, log){
+
     console.log("QUAN2", foodfound.quantity);
     if(foodfound.quantity <= 1) {
 
@@ -158,15 +250,15 @@ app.post('/delfoods', function(request, response){
         console.log(foodfound.foodname);
         if (object.foodname === foodfound.foodname){
           return Log.update({_id: id},
-            {$pull: {log: object._id}});
-      }
-    })
-        .then(function(){
-          response.send("REMOVED");
-        })
-        .catch(function(err){
-          console.log(err.errors);
-        });
+            {$pull: {log: {foodname: object.foodname} }})
+            .then(function(doc){
+              response.send("REMOVED");
+            })
+            .catch(function(err){
+              console.log(err);
+            });
+        }
+      });
       }
       else{
         response.send("quantity - 1");
@@ -283,7 +375,7 @@ app.post('/submitsavedfoods', function(request, response){
     //with the food object captured, I push it into the log array if its not already there
     console.log("IT WILL BE OK", food)
     if(food === null){
-      response.send("You never created that food!")
+      response.status(400);
       return;
     }
     else if (log.log.indexOf(food.foodname) === -1) {

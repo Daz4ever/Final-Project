@@ -1,7 +1,13 @@
+<div class="backgrAllLogs">
 
-<div ng-repeat="log in logs">
-  <a ui-sref="log({logId: log._id})">{{log.date | date: MM-dd-yyyy}} </a>
-  <button ng-click="deleteLogPage(log._id)" type="button" name="button" class="btn btn-danger">Delete</button>
-</div><br>
-  <button ng-click="createLog()" type="button" name="button">Create a Log</button>
-    <h3 ng-show="failed">You already created a log for {{today}}!</h3>
+</div>
+
+<div class="alllogs">
+  <div class="box" ng-repeat="log in logs">
+    <a ui-sref="log({logId: log._id})">{{log.date | date: MM-dd-yyyy}} </a> &nbsp; &nbsp;
+    <button ng-click="deleteLogPage(log._id)" type="button" name="button" class="btn btn-danger">Delete</button>
+  </div><br>
+    <button class="btn btn-default" ng-click="createLog()" type="button" name="button">Create a Log</button>
+      <h3 ng-show="failed">You already created a log for {{today}}!</h3>
+
+</div>

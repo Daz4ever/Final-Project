@@ -1,130 +1,140 @@
-<form class="formspace">
-    <div class="form-group">
-      <label >Food Database</label>
-      <input ng-model="foodname" name="food" type="text" class="form-control" placeholder="Enter a food">
+<div class="backgrLog">
+  <div class="logs">
+    <form class="formspace">
+      <br>
+      <br>
+        <div class="form-group">
+          <label >Food Database</label>
+          <input ng-model="foodname" name="food" type="text" class="form-control" placeholder="Enter a food">
+        </div>
+      <button ng-show="submitbut" style="color: black;" ng-click="submitFood()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
+      <div ng-show="foodoptions">
+        <select style="color: black;"
+          ng-options="foody.item_name for foody in foodsmany"
+        ng-model="foody">
+      </select>
+      <br><br>
+      <button class="btn btn-default" type="submit" ng-click="toDataBase()">Submit</button>
     </div>
-  <button ng-show="submitbut" style="color: black;" ng-click="submitFood()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
-  <div ng-show="foodoptions">
-    <select
-      ng-options="foody.item_name for foody in foodsmany"
-    ng-model="foody">
-  </select>
-  <br><br>
-  <button class="btn btn-default" type="submit" ng-click="toDataBase()">Submit</button>
+
+        <h3 ng-show="enteredNada">Enter a food name!</h3>
+    </form>
+
+    <form class="formspace">
+        <div class="form-group">
+          <label >My Custom Entered Foods</label>
+          <input ng-model="foodname2" name="food" type="text" class="form-control" placeholder="Enter a food">
+        </div>
+      <button style="color: black;" ng-click="submitSavedFoods()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
+      <h3 ng-show="enteredNada2">Enter a food name!</h3>
+      <h3 ng-show="notfound">You never created that food!</h3>
+    </form>
+    <br>
+    <br>
+
+    <button class="formspaced btn btn-default" style="color: black;" ng-click="custom()" type="submit" method="post" name="button">Stored Custom Foods</button>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <table class="table space bottom">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Food</th>
+          <th>Quantity</th>
+          <th>Calories</th>
+          <th>Total Fat(g)</th>
+          <th>Saturated Fat(g)</th>
+          <th>Cholesterol(mg)</th>
+          <th>Sodium(mg)</th>
+          <th>Carbohydrates(g)</th>
+          <th>Fiber(g)</th>
+          <th>Sugars(g)</th>
+          <th>Protein(g)</th>
+          <th></th>
+          <th></th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="foods in food">
+          <th scope="row">{{$index + 1}}</th>
+
+          <td>{{foods.foodname}}</td>
+          <td>{{foods.quantity}}</td>
+          <td>{{foods.quantity * foods.calories | number: 2}}</td>
+          <td>{{foods.quantity * foods.totalFat | number: 2}}</td>
+          <td>{{foods.quantity * foods.saturatedFat | number: 2}}</td>
+          <td>{{foods.quantity * foods.cholesterol | number: 2}}</td>
+          <td>{{foods.quantity * foods.sodium | number: 2}}</td>
+          <td>{{foods.quantity * foods.carbohydrates | number: 2}}</td>
+          <td>{{foods.quantity * foods.fiber | number: 2}}</td>
+          <td>{{foods.quantity * foods.sugars | number: 2}}</td>
+          <td>{{foods.quantity * foods.protein | number: 2}}</td>
+          <td><button ng-click="deleteFoods(foods.foodname, foods._id)" type="button" name="button" class="btn btn-danger">Delete</button></td>
+
+
+        </tr>
+
+        <tr>
+          <th>
+            <form class=""  method="post">
+
+
+          <td>  <input ng-model ="myfood" name="food" type="text" class="form-control" placeholder="Food">
+          </td>
+          <td>  <input ng-model="quantity" name="food" type="text" class="form-control" placeholder="Qty">
+          </td>
+          <td>  <input ng-model="calories" name="food" type="text" class="form-control" placeholder="Calories">
+          </td>
+          <td>  <input ng-model="total_fat" name="food" type="text" class="form-control" placeholder="Fat">
+          </td>
+          <td>  <input ng-model="saturated_fat" name="food" type="text" class="form-control" placeholder="Saturated Fat">
+          </td>
+          <td>  <input ng-model="cholesterol" name="food" type="text" class="form-control" placeholder="cholesterol">
+          </td>
+          <td>  <input ng-model="sodium" name="food" type="text" class="form-control" placeholder="Sodium">
+          </td>
+          <td>  <input ng-model="carbohydrates" name="food" type="text" class="form-control" placeholder="carbohydrates">
+          </td>
+          <td>  <input ng-model="fiber" name="food" type="text" class="form-control" placeholder="fiber">
+          </td>
+          <td>  <input ng-model="sugars" name="food" type="text" class="form-control" placeholder="sugars">
+          </td>
+          <td>  <input ng-model="protein" name="food" type="text" class="form-control" placeholder="Protein">
+          </td>
+          <td><button ng-click="createSavedFood()" type="button" name="button" class="btn btn-success">Submit/Edit</button></td>
+              </form>
+          </th>
+        </tr>
+        <tr>
+          <th scope="row">&#x221e;</th>
+
+          <td class="bold">Total</td>
+          <td class="bold">{{sumQty}}</td>
+          <td class="bold">{{sumCal | number: 2}}</td>
+          <td class="bold">{{sumTFat | number: 2}}</td>
+          <td class="bold">{{sumFat | number: 2}}</td>
+          <td class="bold">{{sumCho | number: 2}}</td>
+          <td class="bold">{{sumSo | number: 2}}</td>
+          <td class="bold">{{sumCarb | number: 2}}</td>
+          <td class="bold">{{sumFi | number: 2}}</td>
+          <td class="bold">{{sumSug | number: 2}}</td>
+          <td class="bold">{{sumPro | number: 2}}</td>
+
+
+
+
+
+
+        </tr>
+
+      </tbody>
+
+    </table>
+    <div class="formspace"><h5> *You can edit foods that exist by using the same food name in the edit field*</h5><img style="width: 100px;" src="pics/nutrition.png" alt="none"></div>
+  </div>
+
 </div>
-
-    <h3 ng-show="enteredNada">Enter a food name!</h3>
-</form>
-
-<form class="formspace">
-    <div class="form-group">
-      <label >My Custom Entered Foods</label>
-      <input ng-model="foodname2" name="food" type="text" class="form-control" placeholder="Enter a food">
-    </div>
-  <button style="color: black;" ng-click="submitSavedFoods()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
-  <h3 ng-show="enteredNada2">Enter a food name!</h3>
-  <h3 ng-show="notfound">You never created that food!</h3>
-</form>
-
-
-<button class="formspace btn btn-default" style="color: black;" ng-click="custom()" type="submit" method="post" name="button">Stored Custom Foods</button>
-
-
-
-<table class="table space bottom">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Food</th>
-      <th>Quantity</th>
-      <th>Calories</th>
-      <th>Total Fat(g)</th>
-      <th>Saturated Fat(g)</th>
-      <th>Cholesterol(mg)</th>
-      <th>Sodium(mg)</th>
-      <th>Carbohydrates(g)</th>
-      <th>Fiber(g)</th>
-      <th>Sugars(g)</th>
-      <th>Protein(g)</th>
-      <th></th>
-      <th></th>
-
-    </tr>
-  </thead>
-  <tbody>
-    <tr ng-repeat="foods in food">
-      <th scope="row">{{$index + 1}}</th>
-
-      <td>{{foods.foodname}}</td>
-      <td>{{foods.quantity}}</td>
-      <td>{{foods.quantity * foods.calories | number: 2}}</td>
-      <td>{{foods.quantity * foods.totalFat | number: 2}}</td>
-      <td>{{foods.quantity * foods.saturatedFat | number: 2}}</td>
-      <td>{{foods.quantity * foods.cholesterol | number: 2}}</td>
-      <td>{{foods.quantity * foods.sodium | number: 2}}</td>
-      <td>{{foods.quantity * foods.carbohydrates | number: 2}}</td>
-      <td>{{foods.quantity * foods.fiber | number: 2}}</td>
-      <td>{{foods.quantity * foods.sugars | number: 2}}</td>
-      <td>{{foods.quantity * foods.protein | number: 2}}</td>
-      <td><button ng-click="deleteFoods(foods.foodname, foods._id)" type="button" name="button" class="btn btn-danger">Delete</button></td>
-
-
-    </tr>
-
-    <tr>
-      <th>
-        <form class=""  method="post">
-
-
-      <td>  <input ng-model ="myfood" name="food" type="text" class="form-control" placeholder="Food">
-      </td>
-      <td>  <input ng-model="quantity" name="food" type="text" class="form-control" placeholder="Qty">
-      </td>
-      <td>  <input ng-model="calories" name="food" type="text" class="form-control" placeholder="Calories">
-      </td>
-      <td>  <input ng-model="total_fat" name="food" type="text" class="form-control" placeholder="Fat">
-      </td>
-      <td>  <input ng-model="saturated_fat" name="food" type="text" class="form-control" placeholder="Saturated Fat">
-      </td>
-      <td>  <input ng-model="cholesterol" name="food" type="text" class="form-control" placeholder="cholesterol">
-      </td>
-      <td>  <input ng-model="sodium" name="food" type="text" class="form-control" placeholder="Sodium">
-      </td>
-      <td>  <input ng-model="carbohydrates" name="food" type="text" class="form-control" placeholder="carbohydrates">
-      </td>
-      <td>  <input ng-model="fiber" name="food" type="text" class="form-control" placeholder="fiber">
-      </td>
-      <td>  <input ng-model="sugars" name="food" type="text" class="form-control" placeholder="sugars">
-      </td>
-      <td>  <input ng-model="protein" name="food" type="text" class="form-control" placeholder="Protein">
-      </td>
-      <td><button ng-click="createSavedFood()" type="button" name="button" class="btn btn-success">Submit/Edit</button></td>
-          </form>
-      </th>
-    </tr>
-    <tr>
-      <th scope="row">&#x221e;</th>
-
-      <td class="bold">Total</td>
-      <td class="bold">{{sumQty}}</td>
-      <td class="bold">{{sumCal | number: 2}}</td>
-      <td class="bold">{{sumTFat | number: 2}}</td>
-      <td class="bold">{{sumFat | number: 2}}</td>
-      <td class="bold">{{sumCho | number: 2}}</td>
-      <td class="bold">{{sumSo | number: 2}}</td>
-      <td class="bold">{{sumCarb | number: 2}}</td>
-      <td class="bold">{{sumFi | number: 2}}</td>
-      <td class="bold">{{sumSug | number: 2}}</td>
-      <td class="bold">{{sumPro | number: 2}}</td>
-
-
-
-
-
-
-    </tr>
-
-  </tbody>
-
-</table>
-<div class="formspace"><h5> *You can edit foods that exist by using the same food name in the edit field*</h5></div>

@@ -4,6 +4,12 @@ app.config(function($stateProvider, $urlRouterProvider){
   $stateProvider
 
   .state({
+    name: 'frontpage',
+    url: '/',
+    templateUrl: 'frontpage.html',
+    controller: 'frontpageController'
+  })
+  .state({
     name: 'alllogs',
     url: '/alllogs',
     templateUrl: 'allLogs.html',
@@ -20,6 +26,18 @@ app.config(function($stateProvider, $urlRouterProvider){
     url: '/customfoods',
     templateUrl: 'customfoods.html',
     controller: 'customfoodsController'
+  })
+  .state({
+    name: 'signup',
+    url: '/signup',
+    templateUrl: 'signup.html',
+    controller: 'signupController'
+  })
+  .state({
+    name: 'login',
+    url: '/login',
+    templateUrl: 'login.html',
+    controller: 'loginController'
   });
   $urlRouterProvider.otherwise('/');
 });
@@ -29,11 +47,45 @@ app.factory('foodlog', function factory($http, $rootScope, $cookies) {
   // var appId ='63be4ab8'
   // var API_KEY = '060f94e8ed4e0561c70e4651b4983d87'
 
+
+  $rootScope.cookieData = null;
+  $rootScope.cookieData = $cookies.getObject('cookieData');
+  console.log("Printing initial cookie", $rootScope.cookieData);
+
+  if ($rootScope.cookieData) {
+  $rootScope.auth = $rootScope.cookieData.token;
+  $rootScope.username = $rootScope.cookieData.username;
+  }
+
+  $rootScope.logout = function(){
+    $cookies.remove('cookieData');
+    $rootScope.cookieData = null;
+    $rootScope.username = null;
+    $rootScope.auth = null;
+  };
+
+
+  service.signup = function(userinfo) {
+    return $http ({
+      method: 'POST',
+      url: '/signup',
+      data: userinfo
+    });
+  };
+
+  service.login = function(userdata) {
+    return $http ({
+      method: 'POST',
+      url: '/login',
+      data: userdata
+    });
+  };
+
   service.alllogs = function(){
     return $http ({
       method: 'GET',
       url: '/alllogs',
-      params: {username: "Dom"}
+      params: {username: $rootScope.username, token: $rootScope.auth}
 
     });
   };
@@ -42,7 +94,7 @@ app.factory('foodlog', function factory($http, $rootScope, $cookies) {
     return $http ({
       method: 'GET',
       url: '/createlog',
-      params: {username: "Dom"}
+      params: {username: $rootScope.username, token: $rootScope.auth}
     });
   };
 
@@ -50,7 +102,8 @@ app.factory('foodlog', function factory($http, $rootScope, $cookies) {
     return $http ({
       method: 'POST',
       url: '/delete',
-      data: {id: id, username: "Dom"},
+      data: {id: id, username: $rootScope.username},
+      params: {token: $rootScope.auth}
     });
   };
 
@@ -62,8 +115,9 @@ app.factory('foodlog', function factory($http, $rootScope, $cookies) {
         id: id,
         food: food,
         food_id: food_id,
-        username: "Dom"
-      }
+        username: $rootScope.username
+      },
+      params: {token: $rootScope.auth}
     });
   };
   service.deletesavedfoods = function(food){
@@ -72,15 +126,16 @@ app.factory('foodlog', function factory($http, $rootScope, $cookies) {
       url: '/deletesavedfoods',
       data: {
         foodname: food,
-        username: "Dom"
-      }
+        username: $rootScope.username
+      },
+      params: {token: $rootScope.auth}
     });
   };
   service.allsaved = function(){
     return $http ({
       method: 'GET',
       url: '/allsaved',
-      params: {username: "Dom"}
+      params: {username: $rootScope.username, token: $rootScope.auth}
     });
   };
 
@@ -88,7 +143,7 @@ app.factory('foodlog', function factory($http, $rootScope, $cookies) {
     return $http ({
       method: 'GET',
       url: '/log/' + id,
-      params: {username: "Dom"}
+      params: {username: $rootScope.username, token: $rootScope.auth}
     });
   };
 
@@ -96,32 +151,87 @@ app.factory('foodlog', function factory($http, $rootScope, $cookies) {
     var url = "https://api.nutritionix.com/v1_1/search/" + foodname + "?results=0%3A20&cal_min=0&cal_max=50000&fields=item_name%2Cnf_calories%2Cnf_total_fat%2Cnf_saturated_fat%2Cnf_cholesterol%2Cnf_sodium%2Cnf_total_carbohydrate%2Cnf_dietary_fiber%2Cnf_sugars%2Cnf_protein&appId=63be4ab8&appKey=060f94e8ed4e0561c70e4651b4983d87";
     return $http ({
       method: 'GET',
-      url: url,
-      params: {username: "Dom"}
+      url: url
     });
   };
   service.bigDataToMyDataBase = function(data){
     return $http ({
       method: 'POST',
       url: '/foodToDatabase',
-      data: data
+      data: data,
+      params: {token: $rootScope.auth}
     });
   };
   service.submitsavedfoods = function(data){
     return $http ({
       method: 'POST',
       url: '/submitsavedfoods',
-      data: data
+      data: data,
+      params: {token: $rootScope.auth}
     });
   };
   service.createsavedfood = function(data){
     return $http ({
       method: 'POST',
       url: '/createsavedfood',
-      data: data
+      data: data,
+      params: {token: $rootScope.auth}
     });
   };
   return service;
+});
+
+
+app.controller('frontpageController', function($scope, foodlog, $state){
+
+});
+
+app.controller('signupController', function($scope, foodlog, $state){
+  $scope.signUp = function() {
+
+    var userinfo = {
+      username: $scope.username,
+      password: $scope.password,
+      password2: $scope.password2
+    };
+    foodlog.signup(userinfo)
+    .success(function(data) {
+      console.log("YAY", data);
+      $state.go('login');
+    })
+    .error(function(data){
+      console.log("failed");
+      $scope.failedPassMatch = true;
+    });
+  };
+
+
+});
+
+app.controller('loginController', function($scope, foodlog, $state, $cookies, $rootScope) {
+
+$scope.login = function(){
+  loginInfo = {
+    username: $scope.username,
+    password: $scope.password
+  };
+
+  foodlog.login(loginInfo)
+  .error(function(data){
+    console.log("failed");
+    $scope.loginfailed = true;
+  })
+  .success(function(data){
+    console.log(data);
+    $cookies.putObject('cookieData', data);
+    console.log("ADDED COOKIE");
+    $rootScope.username = data.username;
+    console.log('Hello', $rootScope.username);
+
+    $state.go('alllogs');
+  });
+};
+$scope.loginfailed = false;
 });
 
 app.controller('alllogsController', function($scope, $state, foodlog) {
@@ -200,7 +310,7 @@ app.controller('customfoodsController', function($scope, foodlog){
 });
 
 
-app.controller('logController', function($scope, foodlog, $state, $stateParams) {
+app.controller('logController', function($scope, foodlog, $state, $stateParams, $rootScope) {
   $scope.logId = $stateParams.logId;
   console.log($scope.logId);
 
@@ -350,7 +460,7 @@ $scope.toDataBase = function(){
   $scope.foodoptions = false;
   console.log("000", $scope.food);
   var data = {
-    username: "Dom",
+    username: $rootScope.username,
     food: $scope.foody,
     fooddate: $scope.fooddate,
     logId: $scope.logId
@@ -393,7 +503,7 @@ $scope.toDataBase = function(){
 
       var data = {
         food: createdfood,
-        username: "Dom",
+        username: $rootScope.username,
         id: $scope.logId
       };
 
@@ -429,7 +539,7 @@ $scope.toDataBase = function(){
         }).join(' ');
 
       var data = {
-        username: "Dom",
+        username: $rootScope.username,
         food: foodname2,
         logId: $scope.logId
       };
@@ -437,17 +547,15 @@ $scope.toDataBase = function(){
       foodlog.submitsavedfoods(data)
       .success(function(data){
         console.log(data);
-        if (data === "You never created that food!"){
-          $scope.notfound = true;
-          //used timeout so flash statement disappears after user re-enters in input bar
-          setTimeout(function(){$scope.notfound = false}, 1000);
 
-        }
         generateAllFoods();
 
       })
       .error(function(data){
-        console.log("failed");
+        console.log("You never created that food!");
+        $scope.notfound = true;
+        setTimeout(function(){$scope.notfound = false}, 1500);
+        setTimeout(function(){generateAllFoods();}, 1600);
       });
     }
   };

@@ -22,8 +22,13 @@ h6 {
 }
 
 .formspace {
-  margin: 30px;
+  padding: 40px 0;
   width: 50%;
+  margin: auto;
+}
+.formspaced {
+  width: 50%;
+  margin: auto;
 }
 
 .space {
@@ -51,4 +56,142 @@ h6 {
 }
 .big{
   font-size: 1.5em;
+}
+.backgrSignup{
+  background: url("pics/rice.jpg") center center no-repeat;
+  text-align: center;
+  width: 100%;
+  background-size: cover;
+	height: 100vh;
+  top: 0;
+}
+
+.backgrLogin{
+  background: url("pics/coffee.jpg") center center no-repeat;
+  text-align: center;
+  width: 100%;
+  background-size: cover;
+	height: 100vh;
+  top: 0;
+}
+.backgrCover{
+  background: url("pics/main.jpg") center center no-repeat;
+  text-align: center;
+  width: 100%;
+  background-size: cover;
+	height: 100vh;
+  top: 0;
+}
+.backgrAllLogs{
+  background: url("pics/salad.jpg") center center no-repeat;
+  text-align: center;
+  width: 100%;
+  background-size: cover;
+	height: 100vh;
+  top: 0;
+}
+.backgrLog{
+  background: url("pics/blueberries.jpg") center center no-repeat;
+  text-align: center;
+  width: 100%;
+  background-size: cover;
+	height: 100vh;
+  top: 0;
+}
+.backgrSave{
+  background: url("pics/teas.jpg") center center no-repeat;
+  text-align: center;
+  width: 100%;
+  background-size: cover;
+	height: 100vh;
+  top: 0;
+}
+
+.signuploginform {
+
+  max-width: 400px;
+  width: 90%;
+  padding: 40px;
+  background-color: rgba(64,62,40,.9);
+  color: white;
+  border-radius: 7px;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+}
+
+.alllogs {
+
+  max-width: 400px;
+  width: 90%;
+  height: 450px;
+  padding: 40px;
+  background-color: rgba(64,62,40,.9);
+  color: white;
+  border-radius: 7px;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow: scroll;
+
+}
+.logs {
+
+  width: 100%;
+  height: 100%;
+  padding: 40px;
+  background-color: rgba(64,62,40,.9);
+  color: white;
+  border-radius: 7px;
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow: scroll;
+
+}
+.fixed{
+  position: fixed;
+  background-color: rgba(64,62,40,.9);
+  width: 100%;
+  height: 52px;
+  font-size: 1.2em;
+  z-index: 2
+
+}
+.right{
+  float: right;
+  display: inline-block;
+}
+.left{
+  display: inline-block;
+}
+.navi a {
+  padding: 10px;
+  color: white;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+.box {
+
+  padding: 10px 0;
+  font-size: 1.2em;
+}
+.box a {
+  color: white;
+  padding: 7px;
+  border-radius: 3px;
+}
+a:hover {
+  text-decoration: none;
+  background-color: #222;
+}
+li {
+  margin-top: 15px;
 }

@@ -7,18 +7,31 @@
     <link rel="stylesheet" href="css.css">
   </head>
   <body ng-app="foodlog">
-    <nav class="navbar navbar-light bg-faded">
-  <ul class="nav navbar-nav">
+    <nav class="navi fixed">
+  <ul class="">
+    <li class="left">
+    <a ui-sref="frontpage">CALORIE TRACKER</a>
+    </li>
 
 
-    <li class="nav-item">
-      <a class="nav-link" ui-sref="alllogs">All Food Logs</a>
+    <li ng-if="username" class="right">
+      <a ui-sref="alllogs">All Food Logs</a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" ui-sref="login">Login</a>
+
+    <li ng-if="!username" class="right">
+      <a ui-sref="signup">Signup</a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" ui-sref="signup">Signup</a>
+    <li ng-if="username" class="right">
+      <a ng-click="logout()" ui-sref="frontpage">Logout</a>
+    </li>
+    <li ng-if="!username" class="right">
+      <a ui-sref="login">Login</a>
+    </li>
+    <li ng-if="username" class="right">
+    <a>Welcome {{username}}!</a>
+    </li>
+    <li ng-if="!username" class="right">
+    <a>Welcome!</a>
     </li>
 
   </ul>
