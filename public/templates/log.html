@@ -5,11 +5,12 @@
     </div>
   <button ng-show="submitbut" style="color: black;" ng-click="submitFood()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
   <div ng-show="foodoptions">
-    <select>
-    <option ng-repeat="food in foodsmany" ng-model="foody">{{food.item_name}}</option>
+    <select
+      ng-options="foody.item_name for foody in foodsmany"
+    ng-model="foody">
   </select>
   <br><br>
-  <button type="submit" ng-click="toDataBase()">Submit</button>
+  <button class="btn btn-default" type="submit" ng-click="toDataBase()">Submit</button>
 </div>
 
     <h3 ng-show="enteredNada">Enter a food name!</h3>

@@ -327,14 +327,14 @@ app.controller('logController', function($scope, foodlog, $state, $stateParams) 
       .success(function(data){
 
         $scope.fooditem = data.hits[0].fields;
-        var foodmany = data.hits.slice(0,5);
+        var foodmany = data.hits.slice(0, 10);
 
-        var temp = [];
+        var temporary = [];
         foodmany.forEach(function(object){
-          temp.push(object.fields);
+          temporary.push(object.fields);
         });
-        $scope.foodsmany = temp
-        console.log("111", temp);
+        $scope.foodsmany = temporary
+        console.log("111", temporary);
         $scope.foodoptions = true;
 
       })
@@ -348,7 +348,7 @@ app.controller('logController', function($scope, foodlog, $state, $stateParams) 
 $scope.toDataBase = function(){
   $scope.submitbut = true;
   $scope.foodoptions = false;
-  console.log("000", $scope.foody);
+  console.log("000", $scope.food);
   var data = {
     username: "Dom",
     food: $scope.foody,
