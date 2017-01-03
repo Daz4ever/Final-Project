@@ -458,7 +458,10 @@ app.controller('logController', function($scope, foodlog, $state, $stateParams, 
 $scope.toDataBase = function(){
   $scope.submitbut = true;
   $scope.foodoptions = false;
-  console.log("000", $scope.food);
+  $scope.foody.item_name = $scope.foody.item_name.toLowerCase()
+    .split(' ').map(function(word) {
+        return word[0].toUpperCase() + word.substr(1);
+    }).join(' ');
   var data = {
     username: $rootScope.username,
     food: $scope.foody,
@@ -469,7 +472,7 @@ $scope.toDataBase = function(){
 
   foodlog.bigDataToMyDataBase(data)
   .success(function(data){
-    console.log("HELLO", data);
+    console.log("HELLO D", data);
     generateAllFoods();
   });
 };
