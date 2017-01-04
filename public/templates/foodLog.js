@@ -54,6 +54,8 @@ app.factory('foodlog', function factory($http, $rootScope, $cookies) {
 
   if ($rootScope.cookieData) {
   $rootScope.auth = $rootScope.cookieData.token;
+  console.log($rootScope.auth)
+    console.log($rootScope.token)
   $rootScope.username = $rootScope.cookieData.username;
   }
 

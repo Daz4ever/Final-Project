@@ -9,7 +9,7 @@
         </div>
       <button ng-show="submitbut" style="color: black;" ng-click="submitFood()" type="submit" method="post" name="button" class="btn btn-default">Submit</button>
       <div ng-show="foodoptions">
-        <select style="color: black;"
+        <select
           ng-options="foody.item_name for foody in foodsmany"
         ng-model="foody">
       </select>
@@ -39,90 +39,90 @@
     <br>
     <br>
     <table class="table space bottom">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Food</th>
-          <th>Quantity</th>
-          <th>Calories</th>
-          <th>Total Fat(g)</th>
-          <th>Saturated Fat(g)</th>
-          <th>Cholesterol(mg)</th>
-          <th>Sodium(mg)</th>
-          <th>Carbohydrates(g)</th>
-          <th>Fiber(g)</th>
-          <th>Sugars(g)</th>
-          <th>Protein(g)</th>
-          <th></th>
-          <th></th>
+      <thead class="smallScreen none">
+        <tr class="smallScreen">
+          <th class="smallScreen">#</th>
+          <th class="smallScreen">Food</th>
+          <th class="smallScreen">Quantity</th>
+          <th class="smallScreen">Calories</th>
+          <th class="smallScreen">Total Fat(g)</th>
+          <th class="smallScreen">Saturated Fat(g)</th>
+          <th class="smallScreen">Cholesterol(mg)</th>
+          <th class="smallScreen">Sodium(mg)</th>
+          <th class="smallScreen">Carbohydrates(g)</th>
+          <th class="smallScreen">Fiber(g)</th>
+          <th class="smallScreen">Sugars(g)</th>
+          <th class="smallScreen">Protein(g)</th>
+          <th class="smallScreen"></th>
+          <th class="smallScreen"></th>
 
         </tr>
       </thead>
-      <tbody>
-        <tr ng-repeat="foods in food">
+      <tbody class="smallScreen">
+        <tr class="smallScreen" ng-repeat="foods in food">
           <th scope="row">{{$index + 1}}</th>
 
-          <td>{{foods.foodname}}</td>
-          <td>{{foods.quantity}}</td>
-          <td>{{foods.quantity * foods.calories | number: 2}}</td>
-          <td>{{foods.quantity * foods.totalFat | number: 2}}</td>
-          <td>{{foods.quantity * foods.saturatedFat | number: 2}}</td>
-          <td>{{foods.quantity * foods.cholesterol | number: 2}}</td>
-          <td>{{foods.quantity * foods.sodium | number: 2}}</td>
-          <td>{{foods.quantity * foods.carbohydrates | number: 2}}</td>
-          <td>{{foods.quantity * foods.fiber | number: 2}}</td>
-          <td>{{foods.quantity * foods.sugars | number: 2}}</td>
-          <td>{{foods.quantity * foods.protein | number: 2}}</td>
-          <td><button ng-click="deleteFoods(foods.foodname, foods._id)" type="button" name="button" class="btn btn-danger">Delete</button></td>
+          <td class="smallScreen"><span class="display">Food Name:</span>{{foods.foodname}}</td>
+          <td class="smallScreen"><span class="display">Quantity:</span>{{foods.quantity}}</td>
+          <td class="smallScreen"><span class="display">Calories:</span>{{foods.quantity * foods.calories | number: 2}}</td>
+          <td class="smallScreen"><span class="display">Total Fat (g):</span>{{foods.quantity * foods.totalFat | number: 2}}</td>
+          <td class="smallScreen"><span class="display">Saturated Fat (g):</span>{{foods.quantity * foods.saturatedFat | number: 2}}</td>
+          <td class="smallScreen"><span class="display">Cholesterol (mg):</span>{{foods.quantity * foods.cholesterol | number: 2}}</td>
+          <td class="smallScreen"><span class="display">Sodium (mg):</span>{{foods.quantity * foods.sodium | number: 2}}</td>
+          <td class="smallScreen"><span class="display">Carbohydrates (g):</span>{{foods.quantity * foods.carbohydrates | number: 2}}</td>
+          <td class="smallScreen"><span class="display">Fiber (g):</span>{{foods.quantity * foods.fiber | number: 2}}</td>
+          <td class="smallScreen"><span class="display">Sugars (g):</span>{{foods.quantity * foods.sugars | number: 2}}</td>
+          <td class="smallScreen"><span class="display">Protein (g):</span>{{foods.quantity * foods.protein | number: 2}}</td>
+          <td class="smallScreen"><button ng-click="deleteFoods(foods.foodname, foods._id)" type="button" name="button" class="btn btn-danger">Delete</button></td>
 
 
         </tr>
 
-        <tr>
-          <th>
+        <tr class="smallScreen">
+          <th class="smallScreen">
             <form class=""  method="post">
 
 
-          <td>  <input ng-model ="myfood" name="food" type="text" class="form-control" placeholder="Food">
+          <td class="smallScreen">  <input ng-model ="myfood" name="food" type="text" class="form-control" placeholder="Food (To edit use same food name)">
           </td>
-          <td>  <input ng-model="quantity" name="food" type="text" class="form-control" placeholder="Qty">
+          <td class="smallScreen">  <input ng-model="quantity" name="food" type="text" class="form-control" placeholder="Qty">
           </td>
-          <td>  <input ng-model="calories" name="food" type="text" class="form-control" placeholder="Cal">
+          <td class="smallScreen">  <input ng-model="calories" name="food" type="text" class="form-control" placeholder="Cal">
           </td>
-          <td>  <input ng-model="total_fat" name="food" type="text" class="form-control" placeholder="Fat">
+          <td class="smallScreen">  <input ng-model="total_fat" name="food" type="text" class="form-control" placeholder="Fat">
           </td>
-          <td>  <input ng-model="saturated_fat" name="food" type="text" class="form-control" placeholder="Saturated Fat">
+          <td class="smallScreen">  <input ng-model="saturated_fat" name="food" type="text" class="form-control" placeholder="Saturated Fat">
           </td>
-          <td>  <input ng-model="cholesterol" name="food" type="text" class="form-control" placeholder="Cholesterol">
+          <td class="smallScreen">  <input ng-model="cholesterol" name="food" type="text" class="form-control" placeholder="Cholesterol">
           </td>
-          <td>  <input ng-model="sodium" name="food" type="text" class="form-control" placeholder="Sodium">
+          <td class="smallScreen">  <input ng-model="sodium" name="food" type="text" class="form-control" placeholder="Sodium">
           </td>
-          <td>  <input ng-model="carbohydrates" name="food" type="text" class="form-control" placeholder="Carbohydrates">
+          <td class="smallScreen">  <input ng-model="carbohydrates" name="food" type="text" class="form-control" placeholder="Carbohydrates">
           </td>
-          <td>  <input ng-model="fiber" name="food" type="text" class="form-control" placeholder="Fiber">
+          <td class="smallScreen">  <input ng-model="fiber" name="food" type="text" class="form-control" placeholder="Fiber">
           </td>
-          <td>  <input ng-model="sugars" name="food" type="text" class="form-control" placeholder="Sugars">
+          <td class="smallScreen">  <input ng-model="sugars" name="food" type="text" class="form-control" placeholder="Sugars">
           </td>
-          <td>  <input ng-model="protein" name="food" type="text" class="form-control" placeholder="Protein">
+          <td class="smallScreen">  <input ng-model="protein" name="food" type="text" class="form-control" placeholder="Protein">
           </td>
-          <td><button ng-click="createSavedFood()" type="button" name="button" class="btn btn-success">Submit/Edit</button></td>
+          <td class="smallScreen"><button ng-click="createSavedFood()" type="button" name="button" class="btn btn-success">Submit/Edit</button></td>
               </form>
           </th>
         </tr>
-        <tr>
-          <th scope="row">&#x221e;</th>
+        <tr class="smallScreen">
+          <th class="smallScreen" scope="row">&#x221e;</th>
 
-          <td class="bold">Total</td>
-          <td class="bold">{{sumQty}}</td>
-          <td class="bold">{{sumCal | number: 2}}</td>
-          <td class="bold">{{sumTFat | number: 2}}</td>
-          <td class="bold">{{sumFat | number: 2}}</td>
-          <td class="bold">{{sumCho | number: 2}}</td>
-          <td class="bold">{{sumSo | number: 2}}</td>
-          <td class="bold">{{sumCarb | number: 2}}</td>
-          <td class="bold">{{sumFi | number: 2}}</td>
-          <td class="bold">{{sumSug | number: 2}}</td>
-          <td class="bold">{{sumPro | number: 2}}</td>
+          <td class="smallScreen bold">Total</td>
+          <td class="smallScreen bold"><span class="display">Quantity:</span>{{sumQty}}</td>
+          <td class="smallScreen bold"><span class="display">Calories:</span>{{sumCal | number: 2}}</td>
+          <td class="smallScreen bold"><span class="display">Total Fat (g):</span>{{sumTFat | number: 2}}</td>
+          <td class="smallScreen bold"><span class="display">Saturated Fat (g):</span>{{sumFat | number: 2}}</td>
+          <td class="smallScreen bold"><span class="display">Cholesterol (mg):</span>{{sumCho | number: 2}}</td>
+          <td class="smallScreen bold"><span class="display">Sodium (mg):</span>{{sumSo | number: 2}}</td>
+          <td class="smallScreen bold"><span class="display">Carbohydrates (mg):</span>{{sumCarb | number: 2}}</td>
+          <td class="smallScreen bold"><span class="display">Fiber (g):</span>{{sumFi | number: 2}}</td>
+          <td class="smallScreen bold"><span class="display">Sugars (g):</span>{{sumSug | number: 2}}</td>
+          <td class="smallScreen bold"><span class="display">Protein (g):</span>{{sumPro | number: 2}}</td>
 
 
 

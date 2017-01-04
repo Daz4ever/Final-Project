@@ -135,6 +135,9 @@ console.log(userdata);
    var token = request.query.token;
    User.find({token: token})
    .then(function(user){
+     console.log("k", token);
+     console.log("k2", user.token);
+     console.log('k3', user);
      if(user.token === token) {
 
        next();
