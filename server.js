@@ -109,24 +109,22 @@ app.post('/signup', function(request, response){
      if (boolean === true) {
        console.log("Login Success");
        user.token = randomToken;
-       return user.save();
+       return user.save()
+       .then(function(user) {
+         response.send(user);
+       })
+       .catch(function(err){
+         console.log('OMG ERROR: ', err.message);
+
+       });
      }
      else {
        console.log("Login Failed");
        response.status(401);
        response.send('Login Failed');
      }
-   })
-   .then(function(user) {
-     if (response.headersSent) {
-       return;
-     }
-     response.send(user);
-   })
-   .catch(function(err){
-     console.log('OMG ERROR: ', err.message);
-
    });
+
  });
 
 
@@ -391,7 +389,10 @@ app.post('/submitsavedfoods', function(request, response){
     });
     console.log("IT WILL BE OK", food);
     if(food === null){
+      console.log("I'm inside");
       response.status(400);
+      response.send("error");
+
       return;
     }
     else if (anotherTemp.indexOf(food.foodname) === -1) {

@@ -189,7 +189,7 @@ app.controller('frontpageController', function($scope, foodlog, $state){
 
 });
 
-app.controller('signupController', function($scope, foodlog, $state){
+app.controller('signupController', function($timeout, $scope, foodlog, $state){
   $scope.signUp = function() {
 
     var userinfo = {
@@ -205,13 +205,14 @@ app.controller('signupController', function($scope, foodlog, $state){
     .error(function(data){
       console.log("failed");
       $scope.failedPassMatch = true;
+      $timeout(function(){$scope.failedPassMatch = false;}, 2500);
     });
   };
 
 
 });
 
-app.controller('loginController', function($scope, foodlog, $state, $cookies, $rootScope) {
+app.controller('loginController', function($scope, foodlog, $state, $cookies, $rootScope, $timeout) {
 
 $scope.login = function(){
   loginInfo = {
@@ -223,6 +224,9 @@ $scope.login = function(){
   .error(function(data){
     console.log("failed");
     $scope.loginfailed = true;
+    $timeout(function(){$scope.loginfailed = false;}, 2500);
+
+
   })
   .success(function(data){
     console.log(data);
@@ -235,10 +239,10 @@ $scope.login = function(){
     $state.go('alllogs');
   });
 };
-$scope.loginfailed = false;
+
 });
 
-app.controller('alllogsController', function($scope, $state, foodlog) {
+app.controller('alllogsController', function($timeout, $scope, $state, foodlog) {
 
   var alllogs = function() {
     foodlog.alllogs()
@@ -271,8 +275,7 @@ app.controller('alllogsController', function($scope, $state, foodlog) {
       if (data === "You already created a log for" + $scope.today + "!"){
         $scope.failed = true;
         //used timeout so flash statement disappears after user re-enters in input bar
-        setTimeout(function(){$scope.failed = false}, 1000);
-        setTimeout(function(){alllogs();}, 2500);
+        $timeout(function(){$scope.failed = false}, 1500);
       }else {
         $state.go('log', {logId: data._id });
       }
@@ -314,7 +317,7 @@ app.controller('customfoodsController', function($scope, foodlog){
 });
 
 
-app.controller('logController', function($scope, foodlog, $state, $stateParams, $rootScope) {
+app.controller('logController', function($timeout, $scope, foodlog, $state, $stateParams, $rootScope) {
   $scope.logId = $stateParams.logId;
   console.log($scope.logId);
 
@@ -429,13 +432,7 @@ app.controller('logController', function($scope, foodlog, $state, $stateParams, 
   $scope.submitFood =function(){
     $scope.submitbut = false;
     foodname = $scope.foodname;
-    console.log("BAH", foodname);
-    if(foodname === undefined) {
 
-      //used timeout so flash statement disappears after user re-enters in input bar
-      setTimeout(function(){$scope.enteredNada = false}, 2000);
-    }
-    else{
 
       foodlog.searchBigData(foodname)
       .success(function(data){
@@ -455,7 +452,7 @@ app.controller('logController', function($scope, foodlog, $state, $stateParams, 
         .error(function(data){
           console.log("failed");
         });
-    }
+
   };
 
 
@@ -535,8 +532,8 @@ $scope.toDataBase = function(){
     if(foodname2 === "") {
       $scope.enteredNada2 = true;
       //used timeout so flash statement disappears after user re-enters in input bar
-      setTimeout(function(){$scope.enteredNada2 = false}, 1000);
-      console.log("here")
+      $timeout(function(){$scope.enteredNada2 = false;}, 1500);
+
     }
     else{
 
@@ -550,7 +547,7 @@ $scope.toDataBase = function(){
         food: foodname2,
         logId: $scope.logId
       };
-
+      console.log("okay")
       foodlog.submitsavedfoods(data)
       .success(function(data){
         console.log(data);
@@ -561,8 +558,8 @@ $scope.toDataBase = function(){
       .error(function(data){
         console.log("You never created that food!");
         $scope.notfound = true;
-        setTimeout(function(){$scope.notfound = false}, 1500);
-        setTimeout(function(){generateAllFoods();}, 1600);
+        $timeout(function(){$scope.notfound = false;}, 1500);
+
       });
     }
   };
