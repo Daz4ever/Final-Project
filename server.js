@@ -59,8 +59,8 @@ const MySaved = mongoose.model('MySaved', {
 // });
 // newsaved.save()
 app.post('/signup', function(request, response){
-var userdata = request.body;
-console.log(userdata);
+  var userdata = request.body;
+  console.log(userdata);
   if(userdata.password === userdata.password2) {
     bcrypt.genSalt(10)
     .then(function(salt){
@@ -93,7 +93,7 @@ console.log(userdata);
     response.status(400);
     response.json("passwords don't match");
   }
- });
+});
 
  app.post('/login', function(request, response) {
    var userdata = request.body;
@@ -132,7 +132,13 @@ console.log(userdata);
 
  function auth(request, response, next) {
    //verify auth token
+   console.log(request.method, request.path);
    var token = request.query.token;
+   if (!token) {
+     response.status(401);
+     response.json({error: "you are not logged in"});
+     return;
+   }
    User.findOne({token: token})
    .then(function(user){
      console.log("k", token);
@@ -150,7 +156,7 @@ console.log(userdata);
  });
  }
 
- app.use(auth);
+app.use(auth);
 
 app.get('/alllogs', function(request, response){
   var username = request.query.username;
