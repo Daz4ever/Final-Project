@@ -133,7 +133,7 @@ console.log(userdata);
  function auth(request, response, next) {
    //verify auth token
    var token = request.query.token;
-   User.find({token: token})
+   User.findOne({token: token})
    .then(function(user){
      console.log("k", token);
      console.log("k2", user.token);
@@ -252,9 +252,13 @@ app.post('/delfoods', function(request, response){
         console.log(object);
         console.log(foodfound.foodname);
         if (object.foodname === foodfound.foodname){
-          return Log.update({_id: id},
-            {$pull: {log: {foodname: object.foodname} }})
-            .then(function(doc){
+          bluebird.all([Log.update({_id: id},
+            {$pull: {log: {foodname: object.foodname} }}), log])
+            .spread(function(doc, log){
+              console.log("am I here", log.date);
+              return Food.remove({_id: foodId});
+            })
+            .then(function(removed){
               response.send("REMOVED");
             })
             .catch(function(err){
@@ -375,35 +379,70 @@ app.post('/submitsavedfoods', function(request, response){
     return [Food.findOne({foodname: temp[0]}), log];
   })
   .spread(function(food, log){
-    //with the food object captured, I push it into the log array if its not already there
-    console.log("IT WILL BE OK", food)
+    anotherTemp = [];
+    log.log.forEach(function(object){
+      anotherTemp.push(object.foodname);
+    });
+    console.log("IT WILL BE OK", food);
     if(food === null){
       response.status(400);
       return;
     }
-    else if (log.log.indexOf(food.foodname) === -1) {
-      log.log.push(food.foodname);
-      return [log.save(), food];
-    }
-    //passed a filler variable incase it gets here instead of the above if statement
-    var x = null;
-    return [x, food];
-  })
-  .spread(function(saved, food){
-    return Food.update({foodname: food.foodname},
-      {
-        $inc: {quantity: 1}
+    else if (anotherTemp.indexOf(food.foodname) === -1) {
+      console.log("ALMOST", log.log);
+      log.log.push({foodname: food.foodname, date: log.date});
+      console.log("ALMOST DONE", log.log);
+      bluebird.all([log.save(), food, log])
+      .spread(function(logsaved, food, log){
+        console.log("u");
+        var newFood = new Food({
+          foodname: food.foodname,
+          quantity: 1,
+          calories: food.calories,
+          totalFat: food.totalFat,
+          saturatedFat: food.saturatedFat,
+          cholesterol: food.cholesterol,
+          sodium: food.sodium,
+          carbohydrates: food.carbohydrates,
+          fiber: food.fiber,
+          sugars: data.food.nf_sugars,
+          protein: food.protein,
+          date: log.date,
+          username: data.username
+        });
+        return newFood.save();
+      })
+      .then(function(food){
+        response.send(food);
+      })
+      .catch(function(err){
+        console.log("oh NOO!!!", err.errors);
+        response.send(err.message);
+        console.log(err.stack);
       });
-    })
-    .then(function(updated){
-      console.log("UMM", updated)
-      response.send(updated);
-    })
-    .catch(function(err){
-      console.log("NOOOO!!!", err.errors);
-      response.send(err.message);
-      console.log(err.stack);
-    });
+
+    }
+    else{
+      bluebird.all([log, food])
+      .spread(function(log, food){
+        console.log('u2')
+        return Food.update({foodname: food.foodname, date: log.date},
+          {
+            $inc: {quantity: 1}
+          });
+        })
+        .then(function(updated){
+          console.log("UMM", updated);
+          response.send(updated);
+        })
+        .catch(function(err){
+          console.log("NOOOO!!!", err.errors);
+          response.send(err.message);
+          console.log(err.stack);
+        });
+
+    }
+});
   });
 
 app.post('/createsavedfood', function(request, response){
@@ -510,7 +549,7 @@ app.get('/log/:id', function(request, response){
     var temp = [];
     data.log.forEach(function(object){
       temp.push(object.foodname);
-    })
+    });
     console.log("OMG WHY???", temp);
 
     //filter through all foods in log
@@ -519,7 +558,7 @@ app.get('/log/:id', function(request, response){
       foodname: {
         $in:
         temp
-      }
+      }, date: data.date
     });
   })
   .then(function(foods){

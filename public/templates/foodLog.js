@@ -54,9 +54,10 @@ app.factory('foodlog', function factory($http, $rootScope, $cookies) {
 
   if ($rootScope.cookieData) {
   $rootScope.auth = $rootScope.cookieData.token;
-  console.log($rootScope.auth)
-    console.log($rootScope.token)
   $rootScope.username = $rootScope.cookieData.username;
+  console.log("GET HERE PLEASE", $rootScope.auth);
+    console.log("GET HERE PLEASE 2", $rootScope.username);
+
   }
 
   $rootScope.logout = function(){
@@ -228,6 +229,7 @@ $scope.login = function(){
     $cookies.putObject('cookieData', data);
     console.log("ADDED COOKIE");
     $rootScope.username = data.username;
+    $rootScope.auth = data.token;
     console.log('Hello', $rootScope.username);
 
     $state.go('alllogs');
@@ -530,7 +532,7 @@ $scope.toDataBase = function(){
 
     var foodname2 = $scope.foodname2
     console.log("BAH2", foodname2);
-    if(foodname2 === undefined) {
+    if(foodname2 === "") {
       $scope.enteredNada2 = true;
       //used timeout so flash statement disappears after user re-enters in input bar
       setTimeout(function(){$scope.enteredNada2 = false}, 1000);
