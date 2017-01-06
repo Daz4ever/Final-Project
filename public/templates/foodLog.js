@@ -275,7 +275,7 @@ app.controller('alllogsController', function($timeout, $scope, $state, foodlog) 
       if (data === "You already created a log for" + $scope.today + "!"){
         $scope.failed = true;
         //used timeout so flash statement disappears after user re-enters in input bar
-        $timeout(function(){$scope.failed = false}, 1500);
+        $timeout(function(){$scope.failed = false;}, 1500);
       }else {
         $state.go('log', {logId: data._id });
       }

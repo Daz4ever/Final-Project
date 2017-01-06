@@ -194,6 +194,7 @@ app.get('/createlog', function(request, response){
       console.log("BBB", today)
       response.send("You already created a log for" + today + "!");
         return;
+      
     }
   });
   if (response.headersSent) {
