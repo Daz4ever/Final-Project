@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+// mongoose.set('debug', true);
 const bluebird = require('bluebird');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -167,12 +168,16 @@ app.get('/alllogs', function(request, response){
 app.post('/delete', function(request, response){
   var id = request.body.id;
   console.log("HERES THE ID", id);
-  return Log.remove({_id: id})
-  .then(function(){
-    Log.find({_id: id});
+  return Log.findOne({_id: id})
+  .then(function(log){
+    console.log("ooo", log.date);
+    return Food.remove({date: log.date});
   })
   .then(function(data){
-    console.log("YOOOOO", data);
+
+  return Log.remove({_id: id});
+})
+.then(function(){
     response.send("success");
   })
   .catch(function(err){
@@ -194,7 +199,7 @@ app.get('/createlog', function(request, response){
       console.log("BBB", today)
       response.send("You already created a log for" + today + "!");
         return;
-      
+
     }
   });
   if (response.headersSent) {
@@ -221,7 +226,7 @@ app.post('/deletesavedfoods', function(request, response){
   var username = request.body.username;
   MySaved.findOne({username: username})
   .then(function(saved){
-    console.log(saved._id)
+    console.log(saved._id);
     return MySaved.update({_id: saved._id},
       {$pull: {saved: foodname}});
   })
